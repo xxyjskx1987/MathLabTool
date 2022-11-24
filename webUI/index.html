@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: *"> -->
+	<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline';"> -->
+	<title>MathLabTools</title>
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.10.8/themes/bootstrap/easyui.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.10.8/themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="jquery-easyui-1.10.8/demo.css">
+	<script type="text/javascript" src="jquery-easyui-1.10.8/jquery.min.js"></script>
+	<script>
+		if (typeof module === 'object') {
+			window.jQuery = window.$ = module.exports;
+		}
+	</script>
+	<script type="text/javascript" src="jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
+	<script src="js/pre_renderer.js"></script>
+</head>
+<body>
+	<div id="root_container" class="easyui-layout" style="width:100%;height:350px;">
+		<div data-options="region:'north'" style="height:50px">
+			<div class="easyui-panel" style="padding:8px;width:100%;">
+				<a id="html_file" href="#" class="easyui-menubutton" data-options="menu:'#mm_file'"></a>
+				<a id="html_run" href="#" class="easyui-menubutton" data-options="menu:'#mm_run'"></a>
+				<a id="html_about" href="#" class="easyui-menubutton" data-options="menu:'#mm_about'"></a>
+				<a href="#" class="easyui-menubutton" data-options="menu:'#mm_language'">Language</a>
+			</div>
+			<div id="mm_file" class="easyui-menu" style="width:150px;">
+				<div id="html_new"></div>
+				<div id="html_open" onclick="file_open_click();"></div>
+				<div id="html_save" onclick="save_click();"></div>
+				<div id="html_save_file" onclick="save_as_click();"></div>
+			</div>
+			<div id="mm_run" class="easyui-menu" style="width:150px;">
+				<div id="html_sub_run" onclick="run_click();"></div>
+			</div>
+			<div id="mm_about" class="easyui-menu" style="width:150px;">
+				<div>v0.0.1</div>
+			</div>
+			<div id="mm_language" class="easyui-menu" style="width:150px;">
+				<div id="html_language_zh_CN">中文</div>
+				<div id="html_language_en">English</div>
+			</div>
+		</div>
+		<div data-options="region:'south',split:true" style="height:150px;">
+			<div id="page_console_log" class="easyui-panel" title="Console" style="width:98%;height:auto;"></div>
+		</div>
+		<div data-options="region:'east',split:true,hideCollapsedContent:false" title="Tools" style="width:150px;"></div>
+		<!-- <div data-options="region:'west',split:true,hideCollapsedContent:false,collapsed:true" title="West" style="width:150px;"></div> -->
+		<div data-options="region:'center'">
+			<div id="tt" class="easyui-tabs" style="width:100%;height:auto;">
+				<div title="tab0" data-options="closable:true">
+					<pre class="editor" id="editor0">mlt_page_console_log('Hi Code!\n');</pre>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="dlg_save_file" class="easyui-dialog" title="Save as" 
+			style="width:600px;height:400px;padding:10px"
+			data-options="
+				closed: true,
+				modal: true,
+				buttons: '#dlg_save_file_buttons'
+			">
+		<div id="dialog_save_as_function_tip" class="easyui-panel" style="padding:10px;"></div>
+		<div class="easyui-panel">
+			<ul id="tree_dir" class="easyui-tree"></ul>
+		</div>
+	</div>
+	<div id="dlg_save_file_buttons">
+		<div class="easyui-panel">
+			<table cellpadding="5">
+				<tr>
+					<td id="dlg_save_as_td_file_name"></td>
+					<td><input id="html_save_as_file_name" class="easyui-textbox" type="text"></input>&nbsp;&nbsp;.js</td>
+					<td><a id="dlg_save_as_submit" href="javascript:void(0)" class="easyui-linkbutton" onclick="save_as_submit();"></a></td>
+					<td><span id="html_save_as_error_tip"></span></td>
+				</tr>
+			</table>
+		</div>
+	
+	<script src="ace-src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/renderer.js"></script>
+</body>
+</html>

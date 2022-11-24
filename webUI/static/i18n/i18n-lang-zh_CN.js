@@ -1,0 +1,16 @@
+$.i18n = {};
+$.i18n.file = '文件';
+$.i18n.run = '运行';
+$.i18n.about = '关于';
+$.i18n.file_new = '新建';
+$.i18n.file_open = '打开';
+$.i18n.file_save = '保存';
+$.i18n.file_save_as = '另存为';
+$.i18n.console = '控制台';
+$.i18n.tools = '工具箱';
+$.i18n.dialog_save_as_function_tip = '重新&nbsp;折叠/展开&nbsp;即可刷新';
+$.i18n.dlg_save_as_td_file_name = '文件名：';
+$.i18n.dlg_save_as_error_tip_tree_require = '请选择文件夹。';
+$.i18n.dlg_save_as_error_tip_file_name_require = '请填写文件名。';
+$.i18n.save_success = '保存成功';
+$.i18n.save_error = '保存失败';

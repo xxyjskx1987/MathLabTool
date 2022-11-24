@@ -1,0 +1,55 @@
+{
+  "name": "MathLabTool",
+  "version": "1.0.0",
+  "description": "math,lab,tool.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "tz",
+  "license": "ISC",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "iconv-lite": "^0.6.3",
+    "serialport": "^10.4.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.66",
+    "@electron-forge/maker-deb": "^6.0.0-beta.66",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.66",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
+    "@electron-forge/maker-zip": "^6.0.0-beta.66",
+    "electron": "20.1.4",
+    "electron-rebuild": "^3.2.9"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "mathlabtool"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
+}
