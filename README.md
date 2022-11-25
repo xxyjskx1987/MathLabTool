@@ -8,7 +8,7 @@ English | [简体中文](./README_zh.md)
 
 ## Introduction
 
-Provide convenient tools for mathematical related experiment, simulation, graphics and other requirements.
+> Provide convenient tools for mathematical related experiment, simulation, graphics and other requirements.
 
 ## Resource
 
