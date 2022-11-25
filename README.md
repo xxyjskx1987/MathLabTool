@@ -15,10 +15,6 @@ Provide convenient tools for mathematical related experiment, simulation, graphi
 [Gitee](https://gitee.com/xxyjskx1987/MathLabTool)  
 [Github](https://github.com/xxyjskx1987/MathLabTool)
 
-## Feature
-
-- **test:** test.  
-
 ## Environment
 
 ```
@@ -28,6 +24,30 @@ electron 20.1.4
 electron-rebuild ^3.2.9
 electron node 16.15.0
 ```
+
+## Installation
+
+```
+npm install
+```
+
+## Start
+
+```
+npm start
+```
+
+## package
+
+```
+npm make
+```
+
+## Feature
+
+- **test:** test.  
+
+## Test
 
 ## License
 
