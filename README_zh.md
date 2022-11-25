@@ -1,6 +1,6 @@
-# 数学实验工具
+# MathLabTool
 
-Math Lab Tool.
+数学仿真、图形化工具.
 
 ![License](https://img.shields.io/badge/license-GPL%20v3-blue)
 
@@ -15,13 +15,43 @@ Math Lab Tool.
 [Gitee](https://gitee.com/xxyjskx1987/MathLabTool)  
 [Github](https://github.com/xxyjskx1987/MathLabTool)
 
-## 特点
-
-- **test：** test。  
-
 ## 环境
 
-test
+```
+node v16.17.0
+npm 8.15.0
+electron 20.1.4
+electron-rebuild ^3.2.9
+electron node 16.15.0
+```
+
+## 安装
+
+```
+npm install
+```
+
+## 运行
+
+```
+npm start
+```
+
+## 打包
+
+```
+npm make
+```
+
+## 特点
+
+- **test:** test.  
+
+## 测试
+
+|环境|测试|
+|:-:|:-:|
+|Win 10|Yes|
 
 ## 许可
 
