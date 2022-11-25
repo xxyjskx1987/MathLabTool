@@ -40,8 +40,9 @@ npm start
 ## Package
 
 ```
-// ./out/make/.../* setup.exe
 npm make
+
+./out/make/.../* setup.exe
 ```
 
 ## Document
