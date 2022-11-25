@@ -50,7 +50,7 @@ npm make
 ## Test
 
 |Environment|Test|
-|:-:|:-:|:-:|
+|:-:|:-:|
 |Win 10|Yes|
 
 ## License
