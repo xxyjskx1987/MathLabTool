@@ -45,13 +45,17 @@ npm make
 ./out/make/.../* setup.exe
 ```
 
-## Document
+## API Reference
 
 test
 
 ## Feature
 
-- **test:** test.  
+- **Open Source:** Open source.  
+- **Document:** Provide API Reference.  
+- **Study Easy:** Follow javascript syntax.  
+- **Use Easy:** Keep improvement.  
+- **Full Function:** Keep improvement.  
 
 ## Test
 

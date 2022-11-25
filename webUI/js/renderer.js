@@ -114,24 +114,40 @@ $(function() {
 	
 	event_load();
 	
-	// add_graph_window();
-	// add_graph_window();
-	
 	isload = true;
 });
 
 var graph_index = 0;
 function add_graph_window() {
-	$("body").append('<div id="html_graph_' + graph_index + '"></div>');
+	$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
 	$('#html_graph_' + graph_index).window({
 		width: 400,
 		height: 300,
 		left: 45 + 40 * graph_index,
 		top: 85 + 40 * graph_index,
 		minimizable: false,
-		modal: false
+		modal: false,
+		onResize: function(width, height) {
+			// console.log(this.id);
+			var id_array = this.id.split("_");
+			var canvas = document.getElementById('canvas_' + id_array[2]);
+			canvas.width = width - 18;
+			canvas.height = height - 44;
+			// var ctx = canvas.getContext('2d');
+			// if (ctx) {
+				// ctx.clearRect(0, 0, canvas.width, canvas.height);
+			// }
+		}
 	});
 	
+	var canvas = document.getElementById('canvas_' + graph_index);
+	canvas.width = 400 - 18;
+	canvas.height = 300 - 44;
+	// var ctx = canvas.getContext('2d');
+	// if (ctx) {
+		// console.log("2d");
+	// }
+
 	graph_index++;
 }
 

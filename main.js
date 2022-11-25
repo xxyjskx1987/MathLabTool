@@ -1,4 +1,3 @@
-// Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
@@ -86,14 +85,18 @@ function fileDisplay(filePath, handle, tree_parent, filename) {
 	// );
 // });
 
-var code_handle = null;
+var page_handle = null;
 global.mlt_page_console_log = function(log_str) {
 	// console.log(log_str);
-	if(code_handle){
-		// console.log(code_handle);
-		code_handle.sender.send('pong', 'page_console_log|' + log_str);
+	if(page_handle){
+		// console.log(page_handle);
+		page_handle.sender.send('pong', 'page_console_log|' + log_str);
 	}
-}
+};
+
+global.mlt_draw_graph = function() {
+	page_handle.sender.send('pong', 'draw_graph');
+};
 
 let mainWindow;
 
@@ -101,7 +104,9 @@ ipcMain.on("ping", (event, arg) => {
 	// console.log(arg);
 	// event.reply('pong', '中文');
 	var msg_array = arg.split('|');
-	if(msg_array[0] == 'get_dir') {
+	if(msg_array[0] == 'page_handle') {
+		page_handle = event;
+	} else if(msg_array[0] == 'get_dir') {
 		if(msg_array[1] == 'MyComputer') {
 			get_dir_root(event, msg_array[1]);
 		} else {
@@ -111,7 +116,7 @@ ipcMain.on("ping", (event, arg) => {
 		// console.log(msg_array[1]);
 		set_file_write(event, msg_array[1], msg_array[2], 'set_file');
 	} else if(msg_array[0] == 'run_file') {
-		code_handle = event;
+		// code_handle = event;
 		set_file_write(event, msg_array[1], msg_array[2], 'run_file');
 	} else if(msg_array[0] == 'set_exist_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_exist_file');
@@ -135,35 +140,40 @@ function set_file_write(handle, path_name, val, cmd) {
 }
 
 const createWindow = () => {
-  // Create the browser window.
-  Menu.setApplicationMenu(null)
-  
-  mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 700,
-	icon: path.join(__dirname, 'public/icon/mathlabtool.ico'),
-    webPreferences: {
-		contextIsolation: false,
-		nodeIntegration: true,
-		preload: path.join(__dirname, 'src/preload.js')
-    }
-  })
+	Menu.setApplicationMenu(null);
 
-  // 加载 index.html
-  mainWindow.loadFile('webUI/index.html')
+	mainWindow = new BrowserWindow({
+		width: 1100,
+		height: 700,
+		icon: path.join(__dirname, 'public/icon/mathlabtool.ico'),
+		webPreferences: {
+			contextIsolation: false,
+			nodeIntegration: true,
+			// webgl: true,
+			// webSecurity: false,
+			// experimentalFeatures: true,
+			// experimentalCanvasFeatures: true,
+			preload: path.join(__dirname, 'src/preload.js')
+		}
+	});
 
-  // 打开开发工具
-  // mainWindow.webContents.openDevTools()
+	mainWindow.loadFile('webUI/index.html');
+
+	// if (process.NODE_ENV === 'development') {
+	// mainWindow.webContents.openDevTools();
+	// }
 }
 
 app.disableHardwareAcceleration()
+
+// app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 // 这段程序将会在 Electron 结束初始化
 // 和创建浏览器窗口的时候调用
 // 部分 API 在 ready 事件触发后才能使用。
 app.whenReady().then(() => {
 	createWindow()
-
+	
 	app.on('activate', () => {
 		// On macOS it's common to re-create a window in the app when the
 		// dock icon is clicked and there are no other windows open.

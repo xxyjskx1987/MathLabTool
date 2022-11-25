@@ -62,6 +62,8 @@ function save_as_submit() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+	ipcRenderer.send("ping", 'page_handle');
+	
 	$('#tree_dir').tree({
 		onExpand: function(node) {
 			// console.log(node.text);
@@ -127,6 +129,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			// console.log('page_console_log', msg_array[1].replace('\n', '<br>'));
 			// $('#page_console_log').html($('#page_console_log').html() + msg_array[1].replace('\n', '<br />'));
 			$('#page_console_log').append(msg_array[1].replace('\n', '<br />'));
+		} else if(msg_array[0] == 'draw_graph') {
+			add_graph_window();
 		}
 	});
 });
