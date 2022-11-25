@@ -8,7 +8,7 @@ English | [简体中文](./README_zh.md)
 
 ## Introduction
 
-Provide convenient tools for mathematical related experiment, simulation, simulation and other requirements.
+Provide convenient tools for mathematical related experiment, simulation, graphics and other requirements.
 
 ## Resource
 
@@ -21,7 +21,13 @@ Provide convenient tools for mathematical related experiment, simulation, simula
 
 ## Environment
 
-test
+```
+node v16.17.0
+npm 8.15.0
+electron 20.1.4
+electron-rebuild ^3.2.9
+electron node 16.15.0
+```
 
 ## License
 
