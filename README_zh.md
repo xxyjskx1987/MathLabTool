@@ -47,7 +47,7 @@ npm make
 
 ## 接口文档
 
-test
+[接口文档](https://github.com/xxyjskx1987/MathLabTool/wiki/API-Reference)
 
 ## 特点
 

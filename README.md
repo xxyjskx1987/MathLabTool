@@ -47,7 +47,7 @@ npm make
 
 ## API Reference
 
-test
+[API Reference](https://github.com/xxyjskx1987/MathLabTool/wiki/API-Reference)
 
 ## Feature
 
