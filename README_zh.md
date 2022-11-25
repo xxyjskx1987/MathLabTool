@@ -40,6 +40,7 @@ npm start
 ## 打包
 
 ```
+// ./out/make/.../* setup.exe
 npm make
 ```
 

@@ -114,8 +114,26 @@ $(function() {
 	
 	event_load();
 	
+	// add_graph_window();
+	// add_graph_window();
+	
 	isload = true;
 });
+
+var graph_index = 0;
+function add_graph_window() {
+	$("body").append('<div id="html_graph_' + graph_index + '"></div>');
+	$('#html_graph_' + graph_index).window({
+		width: 400,
+		height: 300,
+		left: 45 + 40 * graph_index,
+		top: 85 + 40 * graph_index,
+		minimizable: false,
+		modal: false
+	});
+	
+	graph_index++;
+}
 
 function load_i18n_data() {
 	$('#html_file').menubutton({
