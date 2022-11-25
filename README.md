@@ -37,7 +37,7 @@ npm install
 npm start
 ```
 
-## package
+## Package
 
 ```
 npm make
@@ -48,6 +48,9 @@ npm make
 - **test:** test.  
 
 ## Test
+
+|Environment|Test|
+|Win 10|Yes|
 
 ## License
 
