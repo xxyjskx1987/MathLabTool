@@ -133,7 +133,12 @@ function set_file_write(handle, path_name, val, cmd) {
 				handle.reply('pong', 'save_file_tip|success');
 			} else if(cmd == 'run_file') {
 				delete require.cache[path_name];
-				require(path_name);
+				try{
+					require(path_name);
+				} catch (e) {
+					// console.log("run code:", e);
+					handle.reply('pong', 'save_file_tip|code_error|' + e.toString());
+				}
 			}
 		}
 	});

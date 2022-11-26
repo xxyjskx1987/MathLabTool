@@ -122,6 +122,8 @@ window.addEventListener('DOMContentLoaded', () => {
 															   tree_dir_file_name + '.js';
 				document.getElementById("editor" + index).style.height = (window.innerHeight - (50 + html_console_height + 35 + 24 +2)) + 'px';
 
+			} else if(msg_array[1] == 'code_error') {
+				$('#page_console_log').append(msg_array[2].replace('\n', '<br />'));
 			} else {
 				$('#html_save_as_error_tip').html($.i18n['save_error']);
 			}
@@ -130,7 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			// $('#page_console_log').html($('#page_console_log').html() + msg_array[1].replace('\n', '<br />'));
 			$('#page_console_log').append(msg_array[1].replace('\n', '<br />'));
 		} else if(msg_array[0] == 'draw_graph') {
-			add_graph_window();
+			show_graph_window('draw_graph');
 		}
 	});
 });
@@ -169,6 +171,7 @@ function run_click() {
 	var tab = $('#tt').tabs('getSelected');
 	var index = $('#tt').tabs('getTabIndex', tab);
 	if(code_editors['editor' + index].mlt_full_path) {
+		graph_index = 0;
 		ipcRenderer.send("ping", 'run_file|' + 
 			code_editors['editor' + index].mlt_full_path + '|' + 
 			code_editors['editor' + index].getValue());

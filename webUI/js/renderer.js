@@ -118,36 +118,49 @@ $(function() {
 });
 
 var graph_index = 0;
-function add_graph_window() {
-	$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
-	$('#html_graph_' + graph_index).window({
-		width: 400,
-		height: 300,
-		left: 45 + 40 * graph_index,
-		top: 85 + 40 * graph_index,
-		minimizable: false,
-		modal: false,
-		onResize: function(width, height) {
-			// console.log(this.id);
-			var id_array = this.id.split("_");
-			var canvas = document.getElementById('canvas_' + id_array[2]);
-			canvas.width = width - 18;
-			canvas.height = height - 44;
-			// var ctx = canvas.getContext('2d');
-			// if (ctx) {
-				// ctx.clearRect(0, 0, canvas.width, canvas.height);
-			// }
-		}
-	});
-	
-	var canvas = document.getElementById('canvas_' + graph_index);
-	canvas.width = 400 - 18;
-	canvas.height = 300 - 44;
-	// var ctx = canvas.getContext('2d');
-	// if (ctx) {
-		// console.log("2d");
-	// }
-
+function show_graph_window(title) {
+	var graph_obj = document.getElementById('html_graph_' + graph_index);
+	if(!graph_obj) {
+		$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
+		$('#html_graph_' + graph_index).window({
+			width: 400,
+			height: 300,
+			title: title,
+			left: 45 + 40 * graph_index,
+			top: 85 + 40 * graph_index,
+			minimizable: false,
+			modal: false,
+			onResize: function(width, height) {
+				// console.log(this.id);
+				var id_array = this.id.split("_");
+				var canvas = document.getElementById('canvas_' + id_array[2]);
+				canvas.width = width - 18;
+				canvas.height = height - 44;
+				// var ctx = canvas.getContext('2d');
+				// if (ctx) {
+					// ctx.clearRect(0, 0, canvas.width, canvas.height);
+				// }
+			}
+		});
+		
+		var canvas = document.getElementById('canvas_' + graph_index);
+		canvas.width = 400 - 18;
+		canvas.height = 300 - 44;
+		// var ctx = canvas.getContext('2d');
+		// if (ctx) {
+			// console.log("2d");
+		// }
+	} else {
+		$('#html_graph_' + graph_index).window('open');
+		$('#html_graph_' + graph_index).window('setTitle', title);
+		var canvas = document.getElementById('canvas_' + graph_index);
+		canvas.width = 400 - 18;
+		canvas.height = 300 - 44;
+		// var ctx = canvas.getContext('2d');
+		// if (ctx) {
+			// ctx.clearRect(0, 0, canvas.width, canvas.height);
+		// }
+	}
 	graph_index++;
 }
 
