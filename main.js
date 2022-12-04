@@ -1,16 +1,30 @@
 if(require('electron-squirrel-startup')) return;
 
+// var sudo = require('sudo-prompt');
+// var options = {
+  // name: 'MathLabTool'
+// };
+// sudo.exec('echo hello', options,
+  // function(error, stdout, stderr) {
+    // if (error) throw error;
+    // console.log('stdout: ' + stdout);
+  // }
+// );
+
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
-// const hello = require('addon/hello.node')
-// console.log(hello.getNApiInfo())
-const { SerialPort } = require('serialport')
+const mlt_addon = require('./addon/mathlabtool')
+// console.log(mlt_addon.getNApiInfo())
+// const { SerialPort } = require('serialport')
 // const iconv = require("iconv-lite")
+const { auth_code } = require('./src/authorization_code')
+console.log(auth_code);
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
+// console.log(process.title);
 
 function get_dir_root(handle, tree_parent) {
 	exec('wmic logicaldisk get caption', (error, stdout, stderr) => {
@@ -134,13 +148,16 @@ function set_file_write(handle, path_name, val, cmd) {
 			if(cmd == 'set_file') {
 				handle.reply('pong', 'save_file_tip|success');
 			} else if(cmd == 'run_file') {
+				// console.log('run_file', path_name, require.cache[path_name]);
 				delete require.cache[path_name];
+				// console.log('run_file', path_name, require.cache[path_name]);
 				try{
 					require(path_name);
 				} catch (e) {
-					// console.log("run code:", e);
+					console.log("run code:", e);
 					handle.reply('pong', 'save_file_tip|code_error|' + e.toString());
 				}
+				// console.log('run_file', path_name, require.cache[path_name]);
 			}
 		}
 	});
@@ -166,9 +183,9 @@ const createWindow = () => {
 
 	mainWindow.loadFile('webUI/index.html');
 
-	// if (process.NODE_ENV === 'development') {
-	// mainWindow.webContents.openDevTools();
-	// }
+	if (!app.isPackaged) {
+		mainWindow.webContents.openDevTools();
+	}
 }
 
 app.disableHardwareAcceleration()

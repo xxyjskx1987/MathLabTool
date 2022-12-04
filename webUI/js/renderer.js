@@ -35,7 +35,7 @@ function event_load() {
 				$('#tt').tabs('add', {
 					title: 'tab' + tab_idx,
 					content: '<pre class="editor" id="editor' + tab_idx + '">' +
-						'mlt_page_console_log("Hi Code!\n");'+
+						'mlt_page_console_log("Hi Code!\\n");'+
 						'</pre>',
 					closable: true
 				});

@@ -9,12 +9,13 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "author": "tz",
+  "author": "xxyjskx1987",
   "license": "ISC",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "iconv-lite": "^0.6.3",
-    "serialport": "^10.4.0"
+    "serialport": "^10.4.0",
+    "sudo-prompt": "^9.2.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.66",
