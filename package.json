@@ -1,32 +1,44 @@
 {
   "name": "MathLabTool",
   "version": "1.0.0",
-  "description": "math,lab,tool.",
+  "description": "MathLabTool",
   "main": "main.js",
   "scripts": {
-    "start": "electron-forge start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "electron main.js",
+	"dist": "electron-builder"
   },
+  "repository": "https://github.com/xxyjskx1987/MathLabTool",
   "author": "xxyjskx1987",
-  "license": "ISC",
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0",
-    "iconv-lite": "^0.6.3",
-    "serialport": "^10.4.0",
-    "sudo-prompt": "^9.2.1"
-  },
+  "license": "GPL-3.0",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.66",
-    "@electron-forge/maker-deb": "^6.0.0-beta.66",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.66",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
-    "@electron-forge/maker-zip": "^6.0.0-beta.66",
-    "electron": "20.1.4",
-    "electron-rebuild": "^3.2.9"
+    "electron": "^22.0.0",
+    "electron-builder": "^23.6.0"
   },
-  "config": {
-    "forge": "./forge.config.js"
+  "build": {
+    "productName":"MathLabTool",
+    "appId": "com.xxyjskx1987.MathLabTool",
+    "copyright":"© 2022 MathLabTool",
+    "directories": {
+      "output": "build"
+    },
+	"nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "win": {
+	  "requestedExecutionLevel": "requireAdministrator",
+      "icon": "public/icon/mathlabtool.ico",
+	  "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   }
 }

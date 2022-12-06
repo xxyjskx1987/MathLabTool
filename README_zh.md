@@ -20,29 +20,29 @@
 ```
 node v16.17.0
 npm 8.15.0
-electron 20.1.4
-electron-rebuild ^3.2.9
-electron node 16.15.0
+yarn 1.22.19
+electron 22.0.0
+electron node 16.17.1
 ```
 
 ## 安装
 
 ```
-npm install
+yarn install
 ```
 
 ## 运行
 
 ```
-npm start
+yarn start
 ```
 
 ## 打包
 
 ```
-npm make
+yarn dist
 
-./out/make/.../* setup.exe
+./build/* setup *.exe
 ```
 
 ## 接口文档
@@ -61,7 +61,7 @@ npm make
 
 |环境|测试|
 |:-:|:-:|
-|Win 10|Yes|
+|Win 10 x64|Yes|
 
 ## 许可
 

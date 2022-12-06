@@ -1,16 +1,3 @@
-if(require('electron-squirrel-startup')) return;
-
-// var sudo = require('sudo-prompt');
-// var options = {
-  // name: 'MathLabTool'
-// };
-// sudo.exec('echo hello', options,
-  // function(error, stdout, stderr) {
-    // if (error) throw error;
-    // console.log('stdout: ' + stdout);
-  // }
-// );
-
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
@@ -18,9 +5,8 @@ const fs = require('fs')
 const mlt_addon = require('./addon/mathlabtool')
 // console.log(mlt_addon.getNApiInfo())
 // const { SerialPort } = require('serialport')
-// const iconv = require("iconv-lite")
 const { auth_code } = require('./src/authorization_code')
-console.log(auth_code);
+// console.log(auth_code);
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
@@ -90,7 +76,6 @@ function fileDisplay(filePath, handle, tree_parent, filename) {
 			// console.log(ports);
 			// event.reply('pong', 'whaaaaaaaa');
 			// if(ports[0]){
-				// var utfstr_friendlyName = iconv.decode(Buffer.from(ports[0]['friendlyName']), 'gb2312')
 				// console.log('中文', utfstr_friendlyName);
 				// event.reply('pong', '中文');
 			// }
@@ -122,6 +107,7 @@ ipcMain.on("ping", (event, arg) => {
 	var msg_array = arg.split('|');
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
+		page_handle.sender.send('pong', 'page_console_log|' + auth_code);
 	} else if(msg_array[0] == 'get_dir') {
 		if(msg_array[1] == 'MyComputer') {
 			get_dir_root(event, msg_array[1]);
