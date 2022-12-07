@@ -51,7 +51,7 @@ function save_as_submit() {
 		$('#html_save_as_error_tip').html('');
 		var tab = $('#tt').tabs('getSelected');
 		var index = $('#tt').tabs('getTabIndex', tab);
-		// console.log(index);
+		// console.log('save_as_submit', tree_dir_selected.id);
 		ipcRenderer.send("ping", 'set_file|' + 
 			tree_dir_selected.id + '\\' + 
 			tree_dir_file_name + '.js' + '|' + 
@@ -138,32 +138,35 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function file_open_click() {
-	var inputObj = document.createElement('input');
-	inputObj.setAttribute('id', 'input_file_open');
-	inputObj.setAttribute('type', 'file');
-	inputObj.setAttribute("style", 'display:none');
-	inputObj.onchange = function(e) { 
-		// console.log(this.files[0], this.files[0].name, this.files[0].path);
-		var file_name = this.files[0].name;
-		var full_path = this.files[0].path;
-		var reader = new FileReader();
-		reader.readAsText(this.files[0]);
-		reader.onload = function(e) {
-			// console.log(this.result);
-			tab_idx++;
-			$('#tt').tabs('add', {
-				title: file_name,
-				content: '<pre class="editor" id="editor' + tab_idx + '"></pre>',
-				closable: true
-			});
-			code_editors['editor' + tab_idx] = ace.edit("editor" + tab_idx);
-			code_editors['editor' + tab_idx].session.setMode("ace/mode/javascript");
-			code_editors['editor' + tab_idx].setValue(this.result);
-			code_editors['editor' + tab_idx].mlt_full_path = full_path;
-			document.getElementById("editor" + tab_idx).style.height = (window.innerHeight - (50 + html_console_height + 35 + 24 +2)) + 'px';
-		}
-	};
-	document.body.appendChild(inputObj);
+	var inputObj = document.getElementById('input_file_open');
+	if(!inputObj) {
+		inputObj = document.createElement('input');
+		inputObj.setAttribute('id', 'input_file_open');
+		inputObj.setAttribute('type', 'file');
+		inputObj.setAttribute("style", 'display:none');
+		inputObj.onchange = function(e) { 
+			// console.log(this.files[0], this.files[0].name, this.files[0].path);
+			var file_name = this.files[0].name;
+			var full_path = this.files[0].path;
+			var reader = new FileReader();
+			reader.readAsText(this.files[0]);
+			reader.onload = function(e) {
+				// console.log(this.result);
+				tab_idx++;
+				$('#tt').tabs('add', {
+					title: file_name,
+					content: '<pre class="editor" id="editor' + tab_idx + '"></pre>',
+					closable: true
+				});
+				code_editors['editor' + tab_idx] = ace.edit("editor" + tab_idx);
+				code_editors['editor' + tab_idx].session.setMode("ace/mode/javascript");
+				code_editors['editor' + tab_idx].setValue(this.result);
+				code_editors['editor' + tab_idx].mlt_full_path = full_path;
+				document.getElementById("editor" + tab_idx).style.height = (window.innerHeight - (50 + html_console_height + 35 + 24 +2)) + 'px';
+			}
+		};
+		document.body.appendChild(inputObj);
+	}
 	inputObj.click();
 }
 

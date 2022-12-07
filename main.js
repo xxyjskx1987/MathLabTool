@@ -7,6 +7,7 @@ const mlt_addon = require('./addon/mathlabtool')
 // const { SerialPort } = require('serialport')
 const { auth_code } = require('./src/authorization_code')
 // console.log(auth_code);
+tmp_auth_code = auth_code;
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
@@ -24,10 +25,11 @@ function get_dir_root(handle, tree_parent) {
 			disks[idx] = disks[idx].replace('\r', '').trim();
 			if(disks[idx]){
 				// var filePath = path.resolve(disks[idx]);
-				var filePath = disks[idx] + '\\';
+				// var filePath = disks[idx] + '\\';
+				var filePath = disks[idx];
 				// console.log(filePath);
-				var filename = filePath.replace('\\', '');
-				fileDisplay(filePath, handle, tree_parent, filename);
+				// var filename = filePath.replace('\\', '');
+				fileDisplay(filePath, handle, tree_parent, filePath);
 			}
 		}
 		// console.log(disks);
@@ -107,7 +109,7 @@ ipcMain.on("ping", (event, arg) => {
 	var msg_array = arg.split('|');
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
-		page_handle.sender.send('pong', 'page_console_log|' + auth_code);
+		page_handle.sender.send('pong', 'page_console_log|' + tmp_auth_code + '\n');
 	} else if(msg_array[0] == 'get_dir') {
 		if(msg_array[1] == 'MyComputer') {
 			get_dir_root(event, msg_array[1]);
@@ -134,14 +136,21 @@ function set_file_write(handle, path_name, val, cmd) {
 			if(cmd == 'set_file') {
 				handle.reply('pong', 'save_file_tip|success');
 			} else if(cmd == 'run_file') {
-				// console.log('run_file', path_name, require.cache[path_name]);
+				// console.log('run_file', path_name, require.cache, require.cache[path_name]);
+				// for(var i in require.cache){
+					// console.log('run_file', path_name, i, require.cache[i]);
+					// if(i == path_name){
+						// console.log('run_file', i, require.cache[i]);
+					// }
+				// }
 				delete require.cache[path_name];
 				// console.log('run_file', path_name, require.cache[path_name]);
-				try{
+				try {
 					require(path_name);
 				} catch (e) {
 					console.log("run code:", e);
-					handle.reply('pong', 'save_file_tip|code_error|' + e.toString());
+					// handle.reply('pong', 'save_file_tip|code_error|' + e.toString());
+					handle.reply('pong', 'page_console_log|' + e.toString() + '\n');
 				}
 				// console.log('run_file', path_name, require.cache[path_name]);
 			}
