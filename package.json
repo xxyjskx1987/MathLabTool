@@ -15,12 +15,28 @@
     "electron-builder": "^23.6.0"
   },
   "build": {
-    "productName":"MathLabTool",
+    "productName": "MathLabTool",
     "appId": "com.xxyjskx1987.MathLabTool",
-    "copyright":"© 2022 MathLabTool",
+    "copyright": "© 2022 MathLabTool",
     "directories": {
       "output": "build"
     },
+	"files": [
+	  "!.git/",
+	  "!build/",
+	  "!extra_files/",
+	  "!node_modules/",
+	  "!.gitignore",
+	  "!LICENSE",
+	  "!package-lock.json",
+	  "!README.md",
+	  "!README_zh.md",
+	  "!yarn.lock",
+	  "!yarn-error.log"
+	],
+	"extraFiles": [
+	  "extra_files"
+	],
 	"nsis": {
       "oneClick": false,
       "allowElevation": true,

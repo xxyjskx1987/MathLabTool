@@ -2,12 +2,10 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
-const mlt_addon = require('./addon/mathlabtool')
+
+var mlt_addon = null;
 // console.log(mlt_addon.getNApiInfo())
 // const { SerialPort } = require('serialport')
-const { auth_code } = require('./src/authorization_code')
-// console.log(auth_code);
-tmp_auth_code = auth_code;
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
@@ -109,7 +107,12 @@ ipcMain.on("ping", (event, arg) => {
 	var msg_array = arg.split('|');
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
-		page_handle.sender.send('pong', 'page_console_log|' + tmp_auth_code + '\n');
+		try {
+			mlt_addon = require('./addon/mathlabtool');
+			page_handle.sender.send('pong', 'page_console_log|' + mlt_addon.getNApiInfo() + '\n');
+		}  catch (e) {
+			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
+		}
 	} else if(msg_array[0] == 'get_dir') {
 		if(msg_array[1] == 'MyComputer') {
 			get_dir_root(event, msg_array[1]);
