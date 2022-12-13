@@ -2,10 +2,9 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
+// const { SerialPort } = require('serialport')
 
 var mlt_addon = null;
-// console.log(mlt_addon.getNApiInfo())
-// const { SerialPort } = require('serialport')
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
@@ -95,8 +94,13 @@ global.mlt_page_console_log = function(log_str) {
 	}
 };
 
-global.mlt_draw_graph = function() {
-	page_handle.sender.send('pong', 'draw_graph');
+global.mlt_draw_graph = function(title, width, height) {
+	page_handle.sender.send('pong', 'draw_graph|' + title + '|' + width + '|' + height);
+	mlt_addon.draw_graph(width, height);
+};
+
+global.draw_line = function() {
+	page_handle.sender.send('pong', 'draw_line');
 };
 
 let mainWindow;
@@ -109,7 +113,7 @@ ipcMain.on("ping", (event, arg) => {
 		page_handle = event;
 		try {
 			mlt_addon = require('./addon/mathlabtool');
-			page_handle.sender.send('pong', 'page_console_log|' + mlt_addon.getNApiInfo() + '\n');
+			// page_handle.sender.send('pong', 'page_console_log|' + mlt_addon.getNApiInfo() + '\n');
 		}  catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}
@@ -139,15 +143,7 @@ function set_file_write(handle, path_name, val, cmd) {
 			if(cmd == 'set_file') {
 				handle.reply('pong', 'save_file_tip|success');
 			} else if(cmd == 'run_file') {
-				// console.log('run_file', path_name, require.cache, require.cache[path_name]);
-				// for(var i in require.cache){
-					// console.log('run_file', path_name, i, require.cache[i]);
-					// if(i == path_name){
-						// console.log('run_file', i, require.cache[i]);
-					// }
-				// }
 				delete require.cache[path_name];
-				// console.log('run_file', path_name, require.cache[path_name]);
 				try {
 					require(path_name);
 				} catch (e) {
@@ -155,7 +151,6 @@ function set_file_write(handle, path_name, val, cmd) {
 					// handle.reply('pong', 'save_file_tip|code_error|' + e.toString());
 					handle.reply('pong', 'page_console_log|' + e.toString() + '\n');
 				}
-				// console.log('run_file', path_name, require.cache[path_name]);
 			}
 		}
 	});

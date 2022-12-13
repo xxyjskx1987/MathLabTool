@@ -132,7 +132,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			// $('#page_console_log').html($('#page_console_log').html() + msg_array[1].replace('\n', '<br />'));
 			$('#page_console_log').append(msg_array[1].replace('\n', '<br />'));
 		} else if(msg_array[0] == 'draw_graph') {
-			show_graph_window('draw_graph');
+			show_graph_window(msg_array[1], msg_array[2], msg_array[3]);
+		} else if(msg_array[0] == 'draw_line') {
+			draw_line([], []);
 		}
 	});
 });

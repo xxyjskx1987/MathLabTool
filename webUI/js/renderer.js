@@ -118,50 +118,56 @@ $(function() {
 });
 
 var graph_index = 0;
-function show_graph_window(title) {
+
+function reset_graph(param_graph_index, set_width, set_height) {
+	var canvas = document.getElementById('canvas_' + param_graph_index);
+	canvas.width = set_width - 18;
+	canvas.height = set_height - 44;
+	var ctx = canvas.getContext('2d');
+	if (ctx) {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
+}
+
+function show_graph_window(title, set_width, set_height) {
+	// console.log("show_graph_window", typeof set_width, set_height);
+	set_width = (set_width != 'undefined' ? set_width : 400);
+	set_height = (set_height != 'undefined' ? set_height : 300);
+	// console.log("show_graph_window", set_width, set_height);
 	var graph_obj = document.getElementById('html_graph_' + graph_index);
 	if(!graph_obj) {
 		$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
-		$('#html_graph_' + graph_index).window({
-			width: 400,
-			height: 300,
-			title: title,
-			left: 45 + 40 * graph_index,
-			top: 85 + 40 * graph_index,
-			minimizable: false,
-			modal: false,
-			onResize: function(width, height) {
-				// console.log(this.id);
-				var id_array = this.id.split("_");
-				var canvas = document.getElementById('canvas_' + id_array[2]);
-				canvas.width = width - 18;
-				canvas.height = height - 44;
-				// var ctx = canvas.getContext('2d');
-				// if (ctx) {
-					// ctx.clearRect(0, 0, canvas.width, canvas.height);
-				// }
-			}
-		});
-		
-		var canvas = document.getElementById('canvas_' + graph_index);
-		canvas.width = 400 - 18;
-		canvas.height = 300 - 44;
-		// var ctx = canvas.getContext('2d');
-		// if (ctx) {
-			// console.log("2d");
-		// }
-	} else {
-		$('#html_graph_' + graph_index).window('open');
-		$('#html_graph_' + graph_index).window('setTitle', title);
-		var canvas = document.getElementById('canvas_' + graph_index);
-		canvas.width = 400 - 18;
-		canvas.height = 300 - 44;
-		// var ctx = canvas.getContext('2d');
-		// if (ctx) {
-			// ctx.clearRect(0, 0, canvas.width, canvas.height);
-		// }
 	}
+	
+	$('#html_graph_' + graph_index).window({
+		width: set_width,
+		height: set_height,
+		title: title != 'undefined' ? title : 'graph_window',
+		left: 45 + 40 * graph_index,
+		top: 85 + 40 * graph_index,
+		minimizable: false,
+		modal: false,
+		onResize: function(width, height) {
+			// console.log(this.id);
+			var id_array = this.id.split("_");
+			// reset_graph(id_array[2]);
+		}
+	});
+	reset_graph(graph_index, set_width, set_height);
+
 	graph_index++;
+}
+
+function draw_line(start_coord, end_coord) {
+	var canvas = document.getElementById('canvas_' + (graph_index - 1));
+	var ctx = canvas.getContext('2d');
+	if (ctx) {
+		ctx.beginPath();
+		ctx.moveTo(0, 0);
+		ctx.lineTo(300, 150);
+		ctx.closePath();
+		ctx.stroke();
+	}
 }
 
 function load_i18n_data() {
