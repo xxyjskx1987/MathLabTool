@@ -134,7 +134,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		} else if(msg_array[0] == 'draw_graph') {
 			show_graph_window(msg_array[1], msg_array[2], msg_array[3]);
 		} else if(msg_array[0] == 'draw_line') {
-			draw_line([], []);
+			draw_line(msg_array[1], msg_array[2], msg_array[3], msg_array[4]);
+		} else if(msg_array[0] == 'draw_text') {
+			draw_text(msg_array[1], msg_array[2], msg_array[3]);
 		}
 	});
 });
@@ -146,7 +148,7 @@ function file_open_click() {
 		inputObj.setAttribute('id', 'input_file_open');
 		inputObj.setAttribute('type', 'file');
 		inputObj.setAttribute("style", 'display:none');
-		inputObj.onchange = function(e) { 
+		inputObj.onchange = function(e) {
 			// console.log(this.files[0], this.files[0].name, this.files[0].path);
 			var file_name = this.files[0].name;
 			var full_path = this.files[0].path;

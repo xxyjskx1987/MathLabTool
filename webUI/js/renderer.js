@@ -158,15 +158,23 @@ function show_graph_window(title, set_width, set_height) {
 	graph_index++;
 }
 
-function draw_line(start_coord, end_coord) {
+function draw_line(start_x, start_y, end_x, end_y) {
 	var canvas = document.getElementById('canvas_' + (graph_index - 1));
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
 		ctx.beginPath();
-		ctx.moveTo(0, 0);
-		ctx.lineTo(300, 150);
+		ctx.moveTo(start_x, start_y);
+		ctx.lineTo(end_x, end_y);
 		ctx.closePath();
 		ctx.stroke();
+	}
+}
+
+function draw_text(text_str, x, y) {
+	var canvas = document.getElementById('canvas_' + (graph_index - 1));
+	var ctx = canvas.getContext('2d');
+	if (ctx) {
+		ctx.fillText(text_str, x, y);
 	}
 }
 

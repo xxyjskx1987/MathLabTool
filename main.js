@@ -94,13 +94,21 @@ global.mlt_page_console_log = function(log_str) {
 	}
 };
 
-global.mlt_draw_graph = function(title, width, height) {
+global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	page_handle.sender.send('pong', 'draw_graph|' + title + '|' + width + '|' + height);
-	mlt_addon.draw_graph(width, height);
+	var addon_graph_type = 0;
+	if(graph_type == 'graph'){
+		addon_graph_type = 1;
+	}
+	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };
 
-global.draw_line = function() {
-	page_handle.sender.send('pong', 'draw_line');
+global.draw_line = function(s_x, s_y, e_x, e_y) {
+	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + e_x + '|' + e_y);
+};
+
+global.draw_text = function(text_str, x, y) {
+	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y);
 };
 
 let mainWindow;
@@ -112,7 +120,8 @@ ipcMain.on("ping", (event, arg) => {
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
 		try {
-			mlt_addon = require('./addon/mathlabtool');
+			// mlt_addon = require('./addon/mathlabtool');
+			mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
 			// page_handle.sender.send('pong', 'page_console_log|' + mlt_addon.getNApiInfo() + '\n');
 		}  catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
