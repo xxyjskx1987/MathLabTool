@@ -158,10 +158,12 @@ function show_graph_window(title, set_width, set_height) {
 	graph_index++;
 }
 
-function draw_line(start_x, start_y, end_x, end_y) {
+function draw_line(start_x, start_y, end_x, end_y, color) {
 	var canvas = document.getElementById('canvas_' + (graph_index - 1));
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
+		ctx.lineWidth = 0.5;
+		ctx.strokeStyle = color;
 		ctx.beginPath();
 		ctx.moveTo(start_x, start_y);
 		ctx.lineTo(end_x, end_y);

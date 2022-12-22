@@ -22,9 +22,7 @@ function get_dir_root(handle, tree_parent) {
 			disks[idx] = disks[idx].replace('\r', '').trim();
 			if(disks[idx]){
 				// var filePath = path.resolve(disks[idx]);
-				// var filePath = disks[idx] + '\\';
 				var filePath = disks[idx];
-				// console.log(filePath);
 				// var filename = filePath.replace('\\', '');
 				fileDisplay(filePath, handle, tree_parent, filePath);
 			}
@@ -87,9 +85,7 @@ function fileDisplay(filePath, handle, tree_parent, filename) {
 
 var page_handle = null;
 global.mlt_page_console_log = function(log_str) {
-	// console.log(log_str);
 	if(page_handle){
-		// console.log(page_handle);
 		page_handle.sender.send('pong', 'page_console_log|' + log_str);
 	}
 };
@@ -103,8 +99,8 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };
 
-global.draw_line = function(s_x, s_y, e_x, e_y) {
-	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + e_x + '|' + e_y);
+global.draw_line = function(s_x, s_y, e_x, e_y, color) {
+	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + e_x + '|' + e_y + '|' + color);
 };
 
 global.draw_text = function(text_str, x, y) {
@@ -114,15 +110,12 @@ global.draw_text = function(text_str, x, y) {
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
-	// console.log(arg);
-	// event.reply('pong', '中文');
 	var msg_array = arg.split('|');
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
 		try {
-			// mlt_addon = require('./addon/mathlabtool');
-			mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
-			// page_handle.sender.send('pong', 'page_console_log|' + mlt_addon.getNApiInfo() + '\n');
+			mlt_addon = require('./addon/mathlabtool');
+			// mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
 		}  catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}
@@ -133,10 +126,8 @@ ipcMain.on("ping", (event, arg) => {
 			get_dir(event, msg_array[1]);
 		}
 	} else if(msg_array[0] == 'set_file') {
-		// console.log(msg_array[1]);
 		set_file_write(event, msg_array[1], msg_array[2], 'set_file');
 	} else if(msg_array[0] == 'run_file') {
-		// code_handle = event;
 		set_file_write(event, msg_array[1], msg_array[2], 'run_file');
 	} else if(msg_array[0] == 'set_exist_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_exist_file');
