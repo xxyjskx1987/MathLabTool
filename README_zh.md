@@ -19,6 +19,7 @@
 
 ```
 node v16.17.0
+node-gyp v9.1.0
 npm 8.15.0
 yarn 1.22.19
 electron 22.0.0
@@ -61,7 +62,7 @@ yarn dist
 
 |环境|测试|
 |:-:|:-:|
-|Win 10 x64|Yes|
+|Win 10 x64|&#10003;|
 
 ## 许可
 

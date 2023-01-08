@@ -95,6 +95,8 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	var addon_graph_type = 0;
 	if(graph_type == 'graph'){
 		addon_graph_type = 1;
+	}else if(graph_type == 'graph_radar'){
+		addon_graph_type = 2;
 	}
 	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };

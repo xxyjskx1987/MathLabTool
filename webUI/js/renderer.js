@@ -176,6 +176,7 @@ function draw_text(text_str, x, y) {
 	var canvas = document.getElementById('canvas_' + (graph_index - 1));
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
+		ctx.font = "normal normal 400 10px sans-serif";
 		ctx.fillText(text_str, x, y);
 	}
 }
