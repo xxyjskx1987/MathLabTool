@@ -46,6 +46,10 @@ yarn dist
 ./build/* setup *.exe
 ```
 
+## 帮助手册
+
+[帮助手册](https://gitee.com/xxyjskx1987/MathLabTool/wikis/%E5%B8%AE%E5%8A%A9%E6%89%8B%E5%86%8C)
+
 ## 接口文档
 
 [接口文档](https://gitee.com/xxyjskx1987/MathLabTool/wikis/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3)

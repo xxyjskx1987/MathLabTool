@@ -32,15 +32,17 @@ function get_dir_root(handle, tree_parent) {
 }
 
 function get_dir(handle, tree_parent) {
-	fs.readdir(tree_parent, function(err, files) {  
-        if(err) {  
-            console.log(err)  
+	console.log(tree_parent);
+	fs.readdir(tree_parent + '/', function(err, files) {
+        if(err) {
+            console.log(err)
         } else {
             files.forEach(function(filename) {
+				console.log(filename);
                 var filedir = path.join(tree_parent, filename);
                 fileDisplay(filedir, handle, tree_parent, filename);
-            });  
-        }  
+            });
+        }
     });
 }
 
@@ -109,6 +111,50 @@ global.draw_text = function(text_str, x, y) {
 	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y);
 };
 
+global.csv2array = function(path, data_option) {
+	var ret_data = [];
+	try {
+		let data = fs.readFileSync(path, "utf8");
+		var data_array = data.split("\n");
+		// console.log("file length:", data_array.length);
+		
+		var all_num = 0;
+		for(var i = 0; i < data_array.length; i++) {
+			if(data_array[i] && i >= data_option.data_begin_row) {
+				// console.log(i, data_array[i]);
+				var raw_data = data_array[i].split(",");
+				// console.log(raw_data.length, raw_data);
+				for(var j = 0; j < raw_data.length; j++) {
+					var col_data_index = data_option.data_index_col.indexOf(j);
+					if(col_data_index != -1) {
+						var ret_data_raw = 0;
+						var ret_data_col = 0;
+						if(data_option.data_struct == 'raw') {
+							ret_data_raw = all_num;
+							ret_data_col = col_data_index;
+						}else if(data_option.data_struct == 'col') {
+							ret_data_raw = col_data_index;
+							ret_data_col = all_num;
+						}
+						if(!ret_data[ret_data_raw]) {
+							ret_data[ret_data_raw] = [];
+						}
+						ret_data[ret_data_raw][ret_data_col] = raw_data[j];
+					}
+				}
+				all_num++;
+			}
+		}
+		
+		console.log("all_num:", all_num);
+		console.log("ret_data:", ret_data);
+	} catch(err) {
+		console.log(err);
+	}
+	
+	return ret_data;
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
@@ -116,8 +162,8 @@ ipcMain.on("ping", (event, arg) => {
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
 		try {
-			mlt_addon = require('./addon/mathlabtool');
-			// mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
+			// mlt_addon = require('./addon/mathlabtool');
+			mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
 		}  catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}

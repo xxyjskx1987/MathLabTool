@@ -46,6 +46,10 @@ yarn dist
 ./build/* setup *.exe
 ```
 
+## Help Manual
+
+[Help Manual](https://github.com/xxyjskx1987/MathLabTool/wiki/Help-Manual)
+
 ## API Reference
 
 [API Reference](https://github.com/xxyjskx1987/MathLabTool/wiki/API-Reference)

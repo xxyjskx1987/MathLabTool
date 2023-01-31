@@ -17,7 +17,7 @@
   "build": {
     "productName": "MathLabTool",
     "appId": "com.xxyjskx1987.MathLabTool",
-    "copyright": "© 2022 MathLabTool",
+    "copyright": "© 2023 MathLabTool",
     "directories": {
       "output": "build"
     },
