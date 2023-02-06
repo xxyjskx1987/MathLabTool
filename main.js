@@ -86,9 +86,18 @@ function fileDisplay(filePath, handle, tree_parent, filename) {
 // });
 
 var page_handle = null;
-global.mlt_page_console_log = function(log_str) {
+global.mlt_page_console_log = function(...log_str) {
+	// console.log(typeof log_str, log_str, JSON.stringify(log_str));
+	var ret = "";
+	for(var idx in log_str) {
+		if(typeof log_str[idx] == 'object') {
+			ret += JSON.stringify(log_str[idx]);
+		} else {
+			ret += log_str[idx];
+		}
+	}
 	if(page_handle){
-		page_handle.sender.send('pong', 'page_console_log|' + log_str);
+		page_handle.sender.send('pong', 'page_console_log|' + ret);
 	}
 };
 
@@ -146,13 +155,29 @@ global.csv2array = function(path, data_option) {
 			}
 		}
 		
-		console.log("all_num:", all_num);
-		console.log("ret_data:", ret_data);
+		// console.log("all_num:", all_num);
+		// console.log("ret_data:", ret_data);
 	} catch(err) {
 		console.log(err);
 	}
 	
 	return ret_data;
+};
+
+global.mlt_m_set_zero = function(m) {
+	return mlt_addon.m_set_zero(m);
+};
+
+global.mlt_m_trans = function(m) {
+	return mlt_addon.m_trans(m);
+};
+
+global.mlt_m_dot = function(m, n) {
+	return mlt_addon.m_dot(m, n);
+};
+
+global.mlt_m_inv_gauss = function(m) {
+	return mlt_addon.m_inv_gauss(m);
 };
 
 let mainWindow;
