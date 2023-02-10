@@ -108,6 +108,8 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 		addon_graph_type = 1;
 	}else if(graph_type == 'graph_radar'){
 		addon_graph_type = 2;
+	}else if(graph_type == 'graph_histogram'){
+		addon_graph_type = 3;
 	}
 	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };
@@ -162,6 +164,34 @@ global.csv2array = function(path, data_option) {
 	}
 	
 	return ret_data;
+};
+
+global.mlt_get_average = function(data) {
+	return mlt_addon.get_average(data);
+};
+
+global.mlt_get_var_sr = function(data, avg) {
+	return mlt_addon.get_var_sr(data, avg);
+};
+
+global.mlt_get_norm_dist_box_muller = function(num, avg, sr) {
+	var data_num = num / 2;
+	var i = 0;
+	var datas = [];
+	while (i < data_num) {
+		var ret = mlt_addon.get_r_norm_dist_box_muller(avg, sr);
+		if(ret[0] || ret[1]){
+			datas.push(ret[0]);
+			datas.push(ret[1]);
+			i++;
+		}
+	}
+	
+	return datas;
+};
+
+global.mlt_m_set_one = function(m) {
+	return mlt_addon.m_set_one(m);
 };
 
 global.mlt_m_set_zero = function(m) {
