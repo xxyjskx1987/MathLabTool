@@ -210,6 +210,20 @@ global.mlt_m_inv_gauss = function(m) {
 	return mlt_addon.m_inv_gauss(m);
 };
 
+global.mlt_kalman_filter = function(datas, q, r, init_p, init_predict) {
+	var kf_data = [];
+	var curr = init_predict;
+	var curr_p = init_p;
+	for(var idx in datas){
+		var ret = mlt_addon.kalman_filter(q, r, curr_p, curr, datas[idx]);
+		curr = ret[0];
+		curr_p = ret[1];
+		kf_data.push(curr);
+	}
+	
+	return kf_data;
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
@@ -217,8 +231,8 @@ ipcMain.on("ping", (event, arg) => {
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
 		try {
-			// mlt_addon = require('./addon/mathlabtool');
-			mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
+			mlt_addon = require('./addon/mathlabtool');
+			// mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
 		}  catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}
