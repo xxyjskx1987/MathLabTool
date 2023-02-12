@@ -166,8 +166,8 @@ global.csv2array = function(path, data_option) {
 	return ret_data;
 };
 
-global.mlt_get_average = function(data) {
-	return mlt_addon.get_average(data);
+global.mlt_get_average_sum_max_min = function(data) {
+	return mlt_addon.get_average_sum_max_min(data);
 };
 
 global.mlt_get_var_sr = function(data, avg) {
