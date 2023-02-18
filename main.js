@@ -224,6 +224,16 @@ global.mlt_kalman_filter = function(datas, q, r, init_p, init_predict) {
 	return kf_data;
 };
 
+global.mlt_draw_formula = function(formula, i_var) {
+	formula = formula.split(' ').join('');
+};
+
+global.mlt_calc_formula = function(formula, i_var, i_var_val) {
+	formula = formula.split(' ').join('');
+	console.log(formula);
+	return mlt_addon.analytic_formula(formula, formula.length, i_var, i_var_val);
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
