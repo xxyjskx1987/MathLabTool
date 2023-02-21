@@ -110,6 +110,14 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 		addon_graph_type = 2;
 	}else if(graph_type == 'graph_histogram'){
 		addon_graph_type = 3;
+	}else if(graph_type == 'graph_formula'){
+		addon_graph_type = 4;
+		for(var idx in graph_data['data']){
+			graph_data['data'][idx]['formula'] = graph_data['data'][idx]['formula'].split(' ').join('');
+			graph_data['data'][idx]['formula_len'] = graph_data['data'][idx]['formula'].length;
+			graph_data['data'][idx]['data_len'] = 20;
+			// console.log(graph_data['data'][idx]);
+		}
 	}
 	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };
@@ -224,13 +232,9 @@ global.mlt_kalman_filter = function(datas, q, r, init_p, init_predict) {
 	return kf_data;
 };
 
-global.mlt_draw_formula = function(formula, i_var) {
-	formula = formula.split(' ').join('');
-};
-
 global.mlt_calc_formula = function(formula, i_var, i_var_val) {
 	formula = formula.split(' ').join('');
-	console.log(formula);
+	// console.log(formula);
 	return mlt_addon.analytic_formula(formula, formula.length, i_var, i_var_val);
 };
 
