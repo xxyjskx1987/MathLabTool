@@ -101,25 +101,61 @@ global.mlt_page_console_log = function(...log_str) {
 	}
 };
 
+global.mlt_draw_graph_formula_data = function() {
+	
+};
+
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	page_handle.sender.send('pong', 'draw_graph|' + title + '|' + width + '|' + height);
 	var addon_graph_type = 0;
 	if(graph_type == 'graph'){
 		addon_graph_type = 1;
+		mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 	}else if(graph_type == 'graph_radar'){
 		addon_graph_type = 2;
+		mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 	}else if(graph_type == 'graph_histogram'){
 		addon_graph_type = 3;
+		mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 	}else if(graph_type == 'graph_formula'){
 		addon_graph_type = 4;
 		for(var idx in graph_data['data']){
 			graph_data['data'][idx]['formula'] = graph_data['data'][idx]['formula'].split(' ').join('');
 			graph_data['data'][idx]['formula_len'] = graph_data['data'][idx]['formula'].length;
-			graph_data['data'][idx]['data_len'] = 20;
+			graph_data['data'][idx]['data_len'] = 80;
 			// console.log(graph_data['data'][idx]);
 		}
+		var ret_data = mlt_addon.draw_graph_formula(addon_graph_type, width - 18, height - 44, graph_data);
+		// console.log("draw_graph_formula", ret_data, ret_data1, ret_data2);
+		var s_coord_x, s_coord_y, e_coord_x, e_coord_y;
+		var reset_draw = true;
+		for(var idx in ret_data){
+			var ret = mlt_addon.analytic_formula(
+						graph_data['data'][0]['formula'], 
+						graph_data['data'][0]['formula_len'], 
+						['x'], 
+						[ret_data[idx]]
+					);
+			// console.log(ret_data[idx], ret);
+			var graph_coord = mlt_addon.get_graph_coord(addon_graph_type, width - 18, height - 44, graph_data, ret_data[idx], ret);
+			if(!graph_coord) {
+				// console.log("graph_coord", graph_coord);
+				reset_draw = true;
+			} else {
+				if(reset_draw) {
+					reset_draw = false;
+					s_coord_x = graph_coord[0];
+					s_coord_y = graph_coord[1];
+				} else {
+					e_coord_x = graph_coord[0];
+					e_coord_y = graph_coord[1];
+					draw_line(s_coord_x, s_coord_y, e_coord_x, e_coord_y, graph_data['data'][0]['color']);
+					s_coord_x = e_coord_x;
+					s_coord_y = e_coord_y;
+				}
+			}
+		}
 	}
-	mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 };
 
 global.draw_line = function(s_x, s_y, e_x, e_y, color) {
