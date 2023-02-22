@@ -137,7 +137,10 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 						[ret_data[idx]]
 					);
 			// console.log(ret_data[idx], ret);
-			var graph_coord = mlt_addon.get_graph_coord(addon_graph_type, width - 18, height - 44, graph_data, ret_data[idx], ret);
+			var graph_coord = undefined;
+			if(ret != "inf"){
+				graph_coord = mlt_addon.get_graph_coord(addon_graph_type, width - 18, height - 44, graph_data, ret_data[idx], ret);
+			}
 			if(!graph_coord) {
 				// console.log("graph_coord", graph_coord);
 				reset_draw = true;
