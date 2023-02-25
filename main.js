@@ -101,8 +101,25 @@ global.mlt_page_console_log = function(...log_str) {
 	}
 };
 
-global.mlt_draw_graph_formula_data = function() {
-	
+global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_data) {
+	page_handle.sender.send('pong', 'draw_graph_3d|' + title + '|' + width + '|' + height);
+	var addon_graph_type = 0;
+	if(graph_type == 'graph'){
+		addon_graph_type = 1;
+		
+		for(var idx in graph_data['data']){
+			graph_data['data'][idx]['camera'] = [9, 45, 45, 45];
+		}
+		mlt_addon.draw_graph_dim3(addon_graph_type, width - 18, height - 44, graph_data);
+	}
+};
+
+global.draw_line_dim3 = function(s_x, s_y, s_z, e_x, e_y, e_z, color) {
+	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + s_z + '|' + e_x + '|' + e_y + '|' + e_z + '|' + color);
+};
+
+global.draw_text_dim3 = function(text_str, x, y, z) {
+	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y + '|' + z);
 };
 
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
@@ -120,41 +137,58 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	}else if(graph_type == 'graph_formula'){
 		addon_graph_type = 4;
 		for(var idx in graph_data['data']){
-			graph_data['data'][idx]['formula'] = graph_data['data'][idx]['formula'].split(' ').join('');
-			graph_data['data'][idx]['formula_len'] = graph_data['data'][idx]['formula'].length;
+			if(graph_data['data'][idx]['formula']){
+				graph_data['data'][idx]['formula'] = graph_data['data'][idx]['formula'].split(' ').join('');
+				graph_data['data'][idx]['formula_len'] = graph_data['data'][idx]['formula'].length;
+			}
 			graph_data['data'][idx]['data_len'] = 80;
 			// console.log(graph_data['data'][idx]);
 		}
 		var ret_data = mlt_addon.draw_graph_formula(addon_graph_type, width - 18, height - 44, graph_data);
-		// console.log("draw_graph_formula", ret_data, ret_data1, ret_data2);
-		var s_coord_x, s_coord_y, e_coord_x, e_coord_y;
-		var reset_draw = true;
+		// console.log("draw_graph_formula", ret_data);
+		
 		for(var idx in ret_data){
-			var ret = mlt_addon.analytic_formula(
-						graph_data['data'][0]['formula'], 
-						graph_data['data'][0]['formula_len'], 
-						['x'], 
-						[ret_data[idx]]
-					);
-			// console.log(ret_data[idx], ret);
-			var graph_coord = undefined;
-			if(ret != "inf"){
-				graph_coord = mlt_addon.get_graph_coord(addon_graph_type, width - 18, height - 44, graph_data, ret_data[idx], ret);
-			}
-			if(!graph_coord) {
-				// console.log("graph_coord", graph_coord);
-				reset_draw = true;
-			} else {
-				if(reset_draw) {
-					reset_draw = false;
-					s_coord_x = graph_coord[0];
-					s_coord_y = graph_coord[1];
+			var s_coord_x, s_coord_y, e_coord_x, e_coord_y;
+			var reset_draw = true;
+			for(var i in ret_data[idx]){
+				var ret = null;
+				if(graph_data['data'][idx]['formula']) {
+					ret = mlt_addon.analytic_formula(
+							graph_data['data'][idx]['formula'], 
+							graph_data['data'][idx]['formula_len'], 
+							['x'], 
+							[ret_data[idx][i]]
+						);
 				} else {
-					e_coord_x = graph_coord[0];
-					e_coord_y = graph_coord[1];
-					draw_line(s_coord_x, s_coord_y, e_coord_x, e_coord_y, graph_data['data'][0]['color']);
-					s_coord_x = e_coord_x;
-					s_coord_y = e_coord_y;
+					var i_val_number = Number(ret_data[idx][i]);
+					ret = graph_data['data'][idx]['formula_code'](i_val_number).toString();
+				}
+				// console.log(ret_data[idx][i], ret);
+				var graph_coord = undefined;
+				if(ret != "inf" && ret != "Infinity"){
+					graph_coord = mlt_addon.get_graph_coord(
+						addon_graph_type, width - 18, height - 44, 
+						graph_data, ret_data[idx][i], ret
+					);
+				}
+				if(!graph_coord) {
+					// console.log("graph_coord", graph_coord);
+					reset_draw = true;
+				} else {
+					if(reset_draw) {
+						reset_draw = false;
+						s_coord_x = graph_coord[0];
+						s_coord_y = graph_coord[1];
+					} else {
+						e_coord_x = graph_coord[0];
+						e_coord_y = graph_coord[1];
+						draw_line(
+							s_coord_x, s_coord_y, e_coord_x, e_coord_y, 
+							graph_data['data'][idx]['color']
+						);
+						s_coord_x = e_coord_x;
+						s_coord_y = e_coord_y;
+					}
 				}
 			}
 		}
@@ -167,6 +201,20 @@ global.draw_line = function(s_x, s_y, e_x, e_y, color) {
 
 global.draw_text = function(text_str, x, y) {
 	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y);
+};
+
+global.array_raw2col = function(data) {
+	var ret = [];
+	for(var idx_raw in data){
+		for(var idx_val in data[idx_raw]){
+			if(!ret[idx_val]){
+				ret[idx_val] = [];
+			}
+			ret[idx_val][idx_raw] = data[idx_raw][idx_val];
+		}
+	}
+	
+	return ret;
 };
 
 global.csv2array = function(path, data_option) {
@@ -197,7 +245,7 @@ global.csv2array = function(path, data_option) {
 						if(!ret_data[ret_data_raw]) {
 							ret_data[ret_data_raw] = [];
 						}
-						ret_data[ret_data_raw][ret_data_col] = raw_data[j];
+						ret_data[ret_data_raw][ret_data_col] = Number(raw_data[j].replace(/\r/g, ""));
 					}
 				}
 				all_num++;
@@ -263,11 +311,17 @@ global.mlt_kalman_filter = function(datas, q, r, init_p, init_predict) {
 	var curr_p = init_p;
 	for(var idx in datas){
 		var ret = mlt_addon.kalman_filter(q, r, curr_p, curr, datas[idx]);
+		if(!ret)
+		{
+			ret = [];
+			ret[0] = undefined;
+			ret[1] = undefined;
+		}
 		curr = ret[0];
 		curr_p = ret[1];
 		kf_data.push(curr);
 	}
-	
+
 	return kf_data;
 };
 
@@ -286,7 +340,7 @@ ipcMain.on("ping", (event, arg) => {
 		try {
 			mlt_addon = require('./addon/mathlabtool');
 			// mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
-		}  catch (e) {
+		} catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}
 	} else if(msg_array[0] == 'get_dir') {
