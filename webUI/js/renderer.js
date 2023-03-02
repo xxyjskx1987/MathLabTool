@@ -129,7 +129,7 @@ function reset_graph(param_graph_index, set_width, set_height) {
 	}
 }
 
-function show_graph_window(title, set_width, set_height) {
+function show_graph_window(title, set_width, set_height, dim) {
 	// console.log("show_graph_window", typeof set_width, set_height);
 	set_width = (set_width != 'undefined' ? set_width : 400);
 	set_height = (set_height != 'undefined' ? set_height : 300);

@@ -132,11 +132,13 @@ window.addEventListener('DOMContentLoaded', () => {
 			// $('#page_console_log').html($('#page_console_log').html() + msg_array[1].replace('\n', '<br />'));
 			$('#page_console_log').append(msg_array[1].replace('\n', '<br />'));
 		} else if(msg_array[0] == 'draw_graph') {
-			show_graph_window(msg_array[1], msg_array[2], msg_array[3]);
+			show_graph_window(msg_array[1], msg_array[2], msg_array[3], 2);
 		} else if(msg_array[0] == 'draw_line') {
 			draw_line(msg_array[1], msg_array[2], msg_array[3], msg_array[4], msg_array[5]);
 		} else if(msg_array[0] == 'draw_text') {
 			draw_text(msg_array[1], msg_array[2], msg_array[3]);
+		} else if(msg_array[0] == 'draw_graph_3d') {
+			show_graph_window(msg_array[1], msg_array[2], msg_array[3], 3);
 		}
 	});
 });

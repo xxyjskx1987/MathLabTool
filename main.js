@@ -108,18 +108,10 @@ global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_da
 		addon_graph_type = 1;
 		
 		for(var idx in graph_data['data']){
-			graph_data['data'][idx]['camera'] = [9, 45, 45, 45];
+			graph_data['data'][idx]['camera'] = [45, 45];
 		}
 		mlt_addon.draw_graph_dim3(addon_graph_type, width - 18, height - 44, graph_data);
 	}
-};
-
-global.draw_line_dim3 = function(s_x, s_y, s_z, e_x, e_y, e_z, color) {
-	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + s_z + '|' + e_x + '|' + e_y + '|' + e_z + '|' + color);
-};
-
-global.draw_text_dim3 = function(text_str, x, y, z) {
-	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y + '|' + z);
 };
 
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
