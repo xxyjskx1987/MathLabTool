@@ -101,16 +101,79 @@ global.mlt_page_console_log = function(...log_str) {
 	}
 };
 
+var handle_graph_data = [];
+var draw_transform_graph_dim3 = function(graph_index, x_diff, y_diff) {
+	console.log("draw_transform_graph_dim3", graph_index, x_diff, y_diff);
+	var per_angle = 1;
+	if(y_diff == 0) {
+		handle_graph_data[3]['camera'][0] = 0;
+		handle_graph_data[3]['camera'][1] = per_angle * x_diff;
+		handle_graph_data[3]['camera'][2] = 0;
+	} else if(x_diff == 0) {
+		handle_graph_data[3]['camera'][0] = per_angle * y_diff;
+		handle_graph_data[3]['camera'][1] = 0;
+		handle_graph_data[3]['camera'][2] = 0;
+	} else {
+		y_diff = -y_diff;
+		var k = y_diff / x_diff;
+		var dist = Math.sqrt(x_diff * x_diff + y_diff * y_diff);
+		if (k < Math.sqrt(2) - 1 && k > -Math.sqrt(2) + 1) {
+			handle_graph_data[3]['camera'][0] = 0;
+			handle_graph_data[3]['camera'][1] = (x_diff > 0) ? (per_angle * dist) : (-per_angle * dist);
+			handle_graph_data[3]['camera'][2] = 0;
+		} else if (k < -Math.sqrt(2) - 1 && k > Math.sqrt(2) + 1) {
+			handle_graph_data[3]['camera'][0] = (y_diff > 0) ? (-per_angle * dist) : (per_angle * dist);
+			handle_graph_data[3]['camera'][1] = 0;
+			handle_graph_data[3]['camera'][2] = 0;
+		} else {
+			handle_graph_data[3]['camera'][0] = 0;
+			handle_graph_data[3]['camera'][1] = 0;
+			handle_graph_data[3]['camera'][2] = (x_diff > 0) ? (-per_angle * dist) : (per_angle * dist);
+		}
+		// if(k >= Math.sqrt(2) - 1 && k <= Math.sqrt(2) + 1) {
+			// handle_graph_data[3]['camera'][0] = 0;
+			// handle_graph_data[3]['camera'][1] = 0;
+			// handle_graph_data[3]['camera'][2] = (x_diff > 0) ? (-per_angle * dist) : (per_angle * dist);
+		// }
+		// if(k >= -Math.sqrt(2) - 1 && k <= -Math.sqrt(2) + 1) {
+			// handle_graph_data[3]['camera'][0] = 0;
+			// handle_graph_data[3]['camera'][1] = 0;
+			// handle_graph_data[3]['camera'][2] = (x_diff > 0) ? (-per_angle * dist) : (per_angle * dist);
+		// }
+	}
+	
+	var ret = mlt_addon.draw_graph_dim3(handle_graph_data[0], handle_graph_data[1], handle_graph_data[2], handle_graph_data[3]);
+	// console.log(ret[0]);
+	// console.log(ret[1]);
+	handle_graph_data[3]['csys_end'] = ret[0];
+	for(var idx in handle_graph_data[3]['data']){
+		handle_graph_data[3]['data'][idx]['data'] = ret[1][idx];
+	}
+};
+
 global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_data) {
+	handle_graph_data = [];
 	page_handle.sender.send('pong', 'draw_graph_3d|' + title + '|' + width + '|' + height);
 	var addon_graph_type = 0;
 	if(graph_type == 'graph'){
 		addon_graph_type = 1;
-		
-		for(var idx in graph_data['data']){
-			graph_data['data'][idx]['camera'] = [45, 45];
+		graph_data['camera'] = [30, -30, -30];
+		graph_data['csys_end'] = [
+			[(graph_data['scale_max_x'] - graph_data['scale_min_x']), 0, 0],
+			[0, (graph_data['scale_max_y'] - graph_data['scale_min_y']), 0],
+			[0, 0, (graph_data['scale_max_z'] - graph_data['scale_min_z'])]
+		];
+		handle_graph_data[0] = addon_graph_type;
+		handle_graph_data[1] = width - 18;
+		handle_graph_data[2] = height - 44;
+		handle_graph_data[3] = graph_data;
+		var ret = mlt_addon.draw_graph_dim3(addon_graph_type, width - 18, height - 44, graph_data);
+		// console.log(ret[0]);
+		// console.log(ret[1]);
+		handle_graph_data[3]['csys_end'] = ret[0];
+		for(var idx in handle_graph_data[3]['data']){
+			handle_graph_data[3]['data'][idx]['data'] = ret[1][idx];
 		}
-		mlt_addon.draw_graph_dim3(addon_graph_type, width - 18, height - 44, graph_data);
 	}
 };
 
@@ -347,6 +410,9 @@ ipcMain.on("ping", (event, arg) => {
 		set_file_write(event, msg_array[1], msg_array[2], 'run_file');
 	} else if(msg_array[0] == 'set_exist_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_exist_file');
+	} else if(msg_array[0] == 'draw_dim3') {
+		// console.log("draw_dim3", msg_array);
+		draw_transform_graph_dim3(msg_array[1], msg_array[2], msg_array[3])
 	}
 });
 

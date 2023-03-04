@@ -118,6 +118,7 @@ $(function() {
 });
 
 var graph_index = 0;
+var handle_graph_index = -1;
 
 function reset_graph(param_graph_index, set_width, set_height) {
 	var canvas = document.getElementById('canvas_' + param_graph_index);
@@ -129,6 +130,52 @@ function reset_graph(param_graph_index, set_width, set_height) {
 	}
 }
 
+var canvas_mouse_obj = {};
+function canvas_monitor(graph_index, set_width, set_height) {
+	if(!canvas_mouse_obj[graph_index.toString()]) {
+		canvas_mouse_obj[graph_index.toString()] = {};
+		canvas_mouse_obj[graph_index.toString()]['mouse_status'] = false;
+		canvas_mouse_obj[graph_index.toString()]['last_x'] = null;
+		canvas_mouse_obj[graph_index.toString()]['last_y'] = null;
+		canvas_mouse_obj[graph_index.toString()]['last_ts'] = null;
+	}
+	var canvas_obj = document.getElementById('canvas_' + graph_index);
+	canvas_obj.addEventListener('mousedown', (e) => {
+		handle_graph_index = graph_index;
+		canvas_mouse_obj[graph_index.toString()]['mouse_status'] = true;
+		canvas_mouse_obj[graph_index.toString()]['last_ts'] = new Date().getTime();
+		// console.log('canvas mousedown');
+	});
+	canvas_obj.addEventListener('mouseup', (e) => {
+		canvas_mouse_obj[graph_index.toString()]['mouse_status'] = false;
+		canvas_mouse_obj[graph_index.toString()]['last_x'] = null;
+		canvas_mouse_obj[graph_index.toString()]['last_y'] = null;
+		canvas_mouse_obj[graph_index.toString()]['last_ts'] = null;
+		// console.log('canvas mouseup');
+	});
+	canvas_obj.addEventListener('mousemove', (e) => {
+		var ts = new Date().getTime();
+		if(canvas_mouse_obj[graph_index.toString()]['mouse_status'] && 
+		canvas_mouse_obj[graph_index.toString()]['last_ts'] != null && 
+		ts - canvas_mouse_obj[graph_index.toString()]['last_ts'] >= 100 && 
+		(e.clientY != canvas_mouse_obj[graph_index.toString()]['last_y'] || e.clientX != canvas_mouse_obj[graph_index.toString()]['last_x'])) {
+			// console.log('canvas mousemove', e.clientX, e.clientY);
+			if(canvas_mouse_obj[graph_index.toString()]['last_x'] != null && 
+			canvas_mouse_obj[graph_index.toString()]['last_y'] != null) {
+				reset_graph(graph_index, set_width, set_height);
+				ipcRenderer.send("ping", 'draw_dim3|' + 
+								graph_index + '|' + 
+								(e.clientX - canvas_mouse_obj[graph_index.toString()]['last_x']) + '|' + 
+								(e.clientY - canvas_mouse_obj[graph_index.toString()]['last_y']));
+			}
+			
+			canvas_mouse_obj[graph_index.toString()]['last_x'] = e.clientX;
+			canvas_mouse_obj[graph_index.toString()]['last_y'] = e.clientY;
+			canvas_mouse_obj[graph_index.toString()]['last_ts'] = ts;
+		}
+	});
+}
+
 function show_graph_window(title, set_width, set_height, dim) {
 	// console.log("show_graph_window", typeof set_width, set_height);
 	set_width = (set_width != 'undefined' ? set_width : 400);
@@ -137,6 +184,9 @@ function show_graph_window(title, set_width, set_height, dim) {
 	var graph_obj = document.getElementById('html_graph_' + graph_index);
 	if(!graph_obj) {
 		$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
+		if(dim == 3) {
+			canvas_monitor(graph_index, set_width, set_height);
+		}
 	}
 	
 	$('#html_graph_' + graph_index).window({
@@ -155,11 +205,12 @@ function show_graph_window(title, set_width, set_height, dim) {
 	});
 	reset_graph(graph_index, set_width, set_height);
 
+	handle_graph_index = graph_index;
 	graph_index++;
 }
 
 function draw_line(start_x, start_y, end_x, end_y, color) {
-	var canvas = document.getElementById('canvas_' + (graph_index - 1));
+	var canvas = document.getElementById('canvas_' + handle_graph_index);
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
 		ctx.lineWidth = 0.5;
@@ -173,7 +224,7 @@ function draw_line(start_x, start_y, end_x, end_y, color) {
 }
 
 function draw_text(text_str, x, y) {
-	var canvas = document.getElementById('canvas_' + (graph_index - 1));
+	var canvas = document.getElementById('canvas_' + handle_graph_index);
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
 		ctx.font = "normal normal 400 10px sans-serif";
