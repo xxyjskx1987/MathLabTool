@@ -140,6 +140,19 @@ function canvas_monitor(graph_index, set_width, set_height) {
 		canvas_mouse_obj[graph_index.toString()]['last_ts'] = null;
 	}
 	var canvas_obj = document.getElementById('canvas_' + graph_index);
+	canvas_obj.addEventListener('mousewheel', (e) => {
+		if(e.wheelDelta > 0 || e.detail < 0){
+			// console.log('up');
+			reset_graph(graph_index, set_width, set_height);
+			ipcRenderer.send("ping", 'draw_dim3|zoom|' + 
+							graph_index + '|plus');
+		}else{
+			// console.log('down');
+			reset_graph(graph_index, set_width, set_height);
+			ipcRenderer.send("ping", 'draw_dim3|zoom|' + 
+							graph_index + '|minus');
+		}
+	});
 	canvas_obj.addEventListener('keydown', (e) => {
 		// console.log(`keyCode: ${e.keyCode}`);
 		// +
