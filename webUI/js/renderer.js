@@ -140,11 +140,27 @@ function canvas_monitor(graph_index, set_width, set_height) {
 		canvas_mouse_obj[graph_index.toString()]['last_ts'] = null;
 	}
 	var canvas_obj = document.getElementById('canvas_' + graph_index);
+	canvas_obj.addEventListener('keydown', (e) => {
+		// console.log(`keyCode: ${e.keyCode}`);
+		// +
+		if(e.keyCode == 187) {
+			reset_graph(graph_index, set_width, set_height);
+			ipcRenderer.send("ping", 'draw_dim3|zoom|' + 
+							graph_index + '|plus');
+		} else if(e.keyCode == 189) {
+			reset_graph(graph_index, set_width, set_height);
+			ipcRenderer.send("ping", 'draw_dim3|zoom|' + 
+							graph_index + '|minus');
+		}
+	});
+	
 	canvas_obj.addEventListener('mousedown', (e) => {
 		handle_graph_index = graph_index;
 		canvas_mouse_obj[graph_index.toString()]['mouse_status'] = true;
 		canvas_mouse_obj[graph_index.toString()]['last_ts'] = new Date().getTime();
 		// console.log('canvas mousedown');
+		
+		canvas_obj.focus();
 	});
 	canvas_obj.addEventListener('mouseup', (e) => {
 		canvas_mouse_obj[graph_index.toString()]['mouse_status'] = false;
@@ -163,7 +179,7 @@ function canvas_monitor(graph_index, set_width, set_height) {
 			if(canvas_mouse_obj[graph_index.toString()]['last_x'] != null && 
 			canvas_mouse_obj[graph_index.toString()]['last_y'] != null) {
 				reset_graph(graph_index, set_width, set_height);
-				ipcRenderer.send("ping", 'draw_dim3|' + 
+				ipcRenderer.send("ping", 'draw_dim3|rotate|' + 
 								graph_index + '|' + 
 								(e.clientX - canvas_mouse_obj[graph_index.toString()]['last_x']) + '|' + 
 								(e.clientY - canvas_mouse_obj[graph_index.toString()]['last_y']));
@@ -183,7 +199,7 @@ function show_graph_window(title, set_width, set_height, dim) {
 	// console.log("show_graph_window", set_width, set_height);
 	var graph_obj = document.getElementById('html_graph_' + graph_index);
 	if(!graph_obj) {
-		$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '"></canvas></div>');
+		$("body").append('<div id="html_graph_' + graph_index + '"><canvas id="canvas_' + graph_index + '" tabindex="0"></canvas></div>');
 		if(dim == 3) {
 			canvas_monitor(graph_index, set_width, set_height);
 		}
