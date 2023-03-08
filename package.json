@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-	"dist": "electron-builder"
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/xxyjskx1987/MathLabTool",
   "author": "xxyjskx1987",
@@ -21,23 +21,23 @@
     "directories": {
       "output": "build"
     },
-	"files": [
-	  "!.git/",
-	  "!build/",
-	  "!extra_files/",
-	  "!node_modules/",
-	  "!.gitignore",
-	  "!LICENSE",
-	  "!package-lock.json",
-	  "!README.md",
-	  "!README_zh.md",
-	  "!yarn.lock",
-	  "!yarn-error.log"
-	],
-	"extraFiles": [
-	  "extra_files"
-	],
-	"nsis": {
+    "files": [
+      "!.git/",
+      "!build/",
+      "!extra_files/",
+      "!node_modules/",
+      "!.gitignore",
+      "!LICENSE",
+      "!package-lock.json",
+      "!README.md",
+      "!README_zh.md",
+      "!yarn.lock",
+      "!yarn-error.log"
+    ],
+    "extraFiles": [
+      "extra_files"
+    ],
+    "nsis": {
       "oneClick": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
@@ -45,9 +45,9 @@
       "createStartMenuShortcut": true
     },
     "win": {
-	  "requestedExecutionLevel": "requireAdministrator",
+      "requestedExecutionLevel": "requireAdministrator",
       "icon": "public/icon/mathlabtool.ico",
-	  "target": [
+      "target": [
         {
           "target": "nsis",
           "arch": [
@@ -56,5 +56,8 @@
         }
       ]
     }
+  },
+  "dependencies": {
+    "serialport": "^10.5.0"
   }
 }

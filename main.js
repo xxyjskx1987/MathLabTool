@@ -2,13 +2,70 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
-// const { SerialPort } = require('serialport')
+const { SerialPort } = require('serialport')
 
 var mlt_addon = null;
+var page_handle = null;
+var sp = null;
 
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
 // console.log(process.title);
+
+global.mlt_serial_list = function() {
+	SerialPort.list().then(ports => {
+		ports.forEach(function(port) {
+			mlt_page_console_log(port.path, '\n');
+			// console.log(port.path);
+			// console.log(port.vendorId);
+		});
+	});
+};
+
+global.mlt_serial_open = function(p_path, p_baudRate) {
+	if(sp != null && sp.isOpen) {
+		sp.close((err) => {
+			if(err) {
+				console.log('serial close err', err);
+				return;
+			}
+		});
+	}
+	
+	setTimeout(function() {
+		sp = new SerialPort({ path: p_path, baudRate: p_baudRate, autoOpen: false }, (err) => {
+			if (err) {
+				mlt_page_console_log('serial open err', err, '\n');
+				return;
+			}
+		});
+		
+		sp.open();
+		
+		sp.on('data', (data) => {
+			mlt_page_console_log(data.toString('ASCII'), '\n');
+		});
+		
+		// sp.on('readable', () => {
+			// console.log(sp.read());
+		// });
+
+		sp.on('error', err => {
+			console.log('serial err', err);
+		});
+		
+		sp.drain(err => {
+			if (err) {
+				console.log('serial write err', err);
+				return;
+			}
+		});
+	}, 100);
+};
+
+global.mlt_serial_write = function(p_data) {
+	sp.write(p_data);
+};
 
 function get_dir_root(handle, tree_parent) {
 	exec('wmic logicaldisk get caption', (error, stdout, stderr) => {
@@ -68,24 +125,6 @@ function fileDisplay(filePath, handle, tree_parent, filename) {
 	});
 }
 
-// ipcMain.on("ping", (event, arg) => {
-	// console.log(arg) // whoooooooh
-	// SerialPort.list().then(
-		// ports => {
-			// console.log(ports);
-			// event.reply('pong', 'whaaaaaaaa');
-			// if(ports[0]){
-				// console.log('中文', utfstr_friendlyName);
-				// event.reply('pong', '中文');
-			// }
-		// },
-		// err => {
-			// console.log(err)
-		// }
-	// );
-// });
-
-var page_handle = null;
 global.mlt_page_console_log = function(...log_str) {
 	// console.log(typeof log_str, log_str, JSON.stringify(log_str));
 	var ret = "";
