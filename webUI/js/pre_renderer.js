@@ -137,6 +137,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			draw_line(msg_array[1], msg_array[2], msg_array[3], msg_array[4], msg_array[5]);
 		} else if(msg_array[0] == 'draw_text') {
 			draw_text(msg_array[1], msg_array[2], msg_array[3]);
+		} else if(msg_array[0] == 'draw_circle') {
+			draw_circle(msg_array[1], msg_array[2], msg_array[3], msg_array[4], msg_array[5]);
 		} else if(msg_array[0] == 'draw_graph_3d') {
 			show_graph_window(msg_array[1], msg_array[2], msg_array[3], 3);
 		}

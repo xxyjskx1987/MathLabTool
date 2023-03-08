@@ -101,6 +101,7 @@ global.mlt_page_console_log = function(...log_str) {
 	}
 };
 
+var graph_datas = {};
 var handle_graph_data = [];
 var draw_zoom_graph_dim3 = function(graph_index, negitive) {
 	if(negitive == 'plus') {
@@ -205,8 +206,11 @@ global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_da
 
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	page_handle.sender.send('pong', 'draw_graph|' + title + '|' + width + '|' + height);
-	var addon_graph_type = 0;
-	if(graph_type == 'graph'){
+	var addon_graph_type = -1;
+	if(graph_type == 'custom'){
+		addon_graph_type = 0;
+		mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
+	}else if(graph_type == 'graph'){
 		addon_graph_type = 1;
 		mlt_addon.draw_graph(addon_graph_type, width - 18, height - 44, graph_data);
 	}else if(graph_type == 'graph_radar'){
@@ -282,6 +286,10 @@ global.draw_line = function(s_x, s_y, e_x, e_y, color) {
 
 global.draw_text = function(text_str, x, y) {
 	page_handle.sender.send('pong', 'draw_text|' + text_str + '|' + x + '|' + y);
+};
+
+global.draw_circle = function(s_x, s_y, radius, color, is_fill) {
+	page_handle.sender.send('pong', 'draw_circle|' + s_x + '|' + s_y + '|' + radius + '|' + color + '|' + is_fill);
 };
 
 global.array_raw2col = function(data) {

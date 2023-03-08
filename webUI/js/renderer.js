@@ -261,6 +261,27 @@ function draw_text(text_str, x, y) {
 	}
 }
 
+function draw_circle(start_x, start_y, radius, color, is_fill) {
+	var canvas = document.getElementById('canvas_' + handle_graph_index);
+	var ctx = canvas.getContext('2d');
+	if (ctx) {
+		if(Number(is_fill)) {
+			ctx.fillStyle = color;
+			ctx.beginPath();
+			ctx.arc(start_x, start_y, radius, 0, 2 * Math.PI, false);
+			ctx.closePath();
+			ctx.fill();
+		} else {
+			ctx.lineWidth = 0.5;
+			ctx.strokeStyle = color;
+			ctx.beginPath();
+			ctx.arc(start_x, start_y, radius, 0, 2 * Math.PI, false);
+			ctx.closePath();
+			ctx.stroke();
+		}
+	}
+}
+
 function load_i18n_data() {
 	$('#html_file').menubutton({
 		text: $.i18n['file']
