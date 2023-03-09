@@ -12,17 +12,17 @@ var sp = null;
 // console.log('process.versions.node', process.versions.node)
 // console.log(process.title);
 
-global.mlt_serial_list = function() {
+global.mlt_serial_list = function(serial_list_callback) {
 	SerialPort.list().then(ports => {
 		ports.forEach(function(port) {
-			mlt_page_console_log(port.path, '\n');
+			serial_list_callback(port);
 			// console.log(port.path);
 			// console.log(port.vendorId);
 		});
 	});
 };
 
-global.mlt_serial_open = function(p_path, p_baudRate) {
+global.mlt_serial_open = function(p_path, p_baudRate, serial_read_callback) {
 	if(sp != null && sp.isOpen) {
 		sp.close((err) => {
 			if(err) {
@@ -35,7 +35,7 @@ global.mlt_serial_open = function(p_path, p_baudRate) {
 	setTimeout(function() {
 		sp = new SerialPort({ path: p_path, baudRate: p_baudRate, autoOpen: false }, (err) => {
 			if (err) {
-				mlt_page_console_log('serial open err', err, '\n');
+				console.log('serial open err', err);
 				return;
 			}
 		});
@@ -43,7 +43,7 @@ global.mlt_serial_open = function(p_path, p_baudRate) {
 		sp.open();
 		
 		sp.on('data', (data) => {
-			mlt_page_console_log(data.toString('ASCII'), '\n');
+			serial_read_callback(data.toString('ASCII'));
 		});
 		
 		// sp.on('readable', () => {
