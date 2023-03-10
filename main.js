@@ -433,6 +433,14 @@ global.mlt_m_inv_gauss = function(m) {
 	return mlt_addon.m_inv_gauss(m);
 };
 
+global.mlt_least_square = function(A, B) {
+	var AT = mlt_addon.m_trans(A);
+	var A1 = mlt_addon.m_dot(AT, A);
+	var A1_inv = mlt_addon.m_inv_gauss(A1);
+	var A2 = mlt_addon.m_dot(A1_inv, AT);
+	return mlt_addon.m_dot(A2, B);
+};
+
 global.mlt_kalman_filter = function(datas, q, r, init_p, init_predict) {
 	var kf_data = [];
 	var curr = init_predict;
