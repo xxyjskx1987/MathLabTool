@@ -3,6 +3,7 @@ const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const { SerialPort } = require('serialport')
+const PNG = require("pngjs").PNG;
 
 var mlt_addon = null;
 var page_handle = null;
@@ -241,6 +242,37 @@ global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_da
 			handle_graph_data[3]['data'][idx]['data'] = ret[1][idx];
 		}
 	}
+};
+
+var handle_fps = null;
+global.mlt_handle_video = function(title, width, height, interval_time, cb_handle_fps) {
+	handle_fps = cb_handle_fps;
+	page_handle.sender.send('pong', 'open_video|' + title + '|' + width + '|' + height + '|' + interval_time);
+};
+
+global.mlt_video_gray_avg = function(png) {
+	for (var y = 0; y < png.height; y++) {
+		for (var x = 0; x < png.width; x++) {
+			var i = y * 4 * png.width + x * 4;
+			var avg = (png.data[i] + png.data[i + 1] + png.data[i + 2]) / 3;
+			png.data[i] = avg;
+			png.data[i+1] = avg;
+			png.data[i+2] = avg;
+		}
+    }
+};
+
+var handle_video_fps = function(graph_index, base64_data) {
+	var head_str = "data:image/png;base64,";
+	// base64_data = base64_data.replace(/^data:image\/\w+;base64,/,"");
+	base64_data = base64_data.replace(head_str, "");
+	var buff = Buffer.from(base64_data, 'base64');
+	var png = PNG.sync.read(buff);
+	handle_fps(png);
+	var options = {colorType: 6};
+	var buffer = PNG.sync.write(png, options);
+	var base64Str = head_str + buffer.toString('base64');
+	page_handle.sender.send('pong', 'draw_img|' + graph_index + '|' + base64Str);
 };
 
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
@@ -498,6 +530,8 @@ ipcMain.on("ping", (event, arg) => {
 		} else if(msg_array[1] == 'zoom') {
 			draw_zoom_graph_dim3(msg_array[2], msg_array[3]);
 		}
+	} else if(msg_array[0] == 'handle_video_fps') {
+		handle_video_fps(msg_array[1], msg_array[2]);
 	}
 });
 

@@ -141,9 +141,31 @@ window.addEventListener('DOMContentLoaded', () => {
 			draw_circle(msg_array[1], msg_array[2], msg_array[3], msg_array[4], msg_array[5]);
 		} else if(msg_array[0] == 'draw_graph_3d') {
 			show_graph_window(msg_array[1], msg_array[2], msg_array[3], 3);
+		} else if(msg_array[0] == 'open_video') {
+			video_file_open(msg_array[1], msg_array[2], msg_array[3], msg_array[4]);
+		} else if(msg_array[0] == 'draw_img') {
+			draw_img(msg_array[1], msg_array[2]);
 		}
 	});
 });
+
+function video_file_open(title, set_width, set_height, interval_time) {
+	var inputObj = document.getElementById('video_file_open');
+	if(!inputObj) {
+		inputObj = document.createElement('input');
+		inputObj.setAttribute('id', 'video_file_open');
+		inputObj.setAttribute('type', 'file');
+		inputObj.setAttribute("style", 'display:none');
+		inputObj.onchange = function(e) {
+			// console.log(this.files[0], this.files[0].name, this.files[0].path);
+			if(this.files[0]) {
+				show_video_window(title, set_width, set_height, this.files[0].path, interval_time);
+			}
+		};
+		document.body.appendChild(inputObj);
+	}
+	inputObj.click();
+}
 
 function file_open_click() {
 	var inputObj = document.getElementById('input_file_open');

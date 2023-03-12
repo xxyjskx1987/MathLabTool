@@ -1,6 +1,6 @@
 {
   "name": "MathLabTool",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "MathLabTool",
   "main": "main.js",
   "scripts": {
@@ -58,6 +58,7 @@
     }
   },
   "dependencies": {
+    "pngjs": "^7.0.0",
     "serialport": "^10.5.0"
   }
 }

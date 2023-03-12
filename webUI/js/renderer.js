@@ -205,6 +205,98 @@ function canvas_monitor(graph_index, set_width, set_height) {
 	});
 }
 
+function handle_video_event(param_graph_index) {
+	var canvas_obj = document.getElementById('canvas_' + param_graph_index);
+	var video_obj = document.getElementById('video_' + param_graph_index);
+	
+	var cRect = canvas_obj.getBoundingClientRect(); 
+	// video_obj.addEventListener('mousemove', (e) => {
+		// console.log(e.clientX - cRect.left, e.clientY - cRect.top);
+	// });
+}
+
+function handle_video_fps(param_graph_index, set_width, set_height) {
+	var canvas_obj = document.getElementById('dump_canvas_' + param_graph_index);
+	if(!canvas_obj) {
+		canvas_obj = document.createElement("canvas");
+		canvas_obj.id = "dump_canvas_" + param_graph_index;
+		canvas_obj.width = set_width - 18;
+		canvas_obj.height = set_height - 44;
+	}
+	var video_obj = document.getElementById('video_' + param_graph_index);
+	var ctx = canvas_obj.getContext('2d');
+	ctx.drawImage(video_obj, 0, 0, set_width - 18, set_height - 44);
+	var base64 = canvas_obj.toDataURL('image/png');
+	// reset_graph(param_graph_index, set_width, set_height);
+	// console.log(base64);
+	ipcRenderer.send("ping", 'handle_video_fps|' + param_graph_index + '|' + base64);
+}
+
+function draw_img(param_graph_index, base64_data) {
+	// console.log('draw_img', graph_index, base64_data);
+	var dump_img = document.getElementById("dump_img_" + param_graph_index);
+	if(!dump_img) {
+		dump_img = document.createElement("img");
+		dump_img.id = "dump_img_" + param_graph_index;
+		dump_img.onload = function(){
+			var canvas_obj = document.getElementById('canvas_' + param_graph_index);
+			var ctx = canvas_obj.getContext('2d');
+			// ctx.drawImage(test_img, 0, 0, 600 - 18, 400 - 44);
+			ctx.drawImage(dump_img, 0, 0, 200, 150);
+		}
+	}
+	dump_img.src = base64_data;
+	// console.log(base64_data, test_img);
+}
+
+function set_video(param_graph_index, set_width, set_height, file_path, interval_time) {
+	var video_obj = document.getElementById('video_' + param_graph_index);
+	video_obj.width = set_width - 18;
+	video_obj.height = set_height - 44;
+	video_obj.src = file_path;
+	video_obj.addEventListener('play', function() {
+        // console.log("play");
+		setInterval(handle_video_fps, interval_time, param_graph_index, set_width, set_height);
+    });
+}
+
+function show_video_window(title, set_width, set_height, file_path, interval_time) {
+	set_width = (set_width != 'undefined' ? set_width : 400);
+	set_height = (set_height != 'undefined' ? set_height : 300);
+	var graph_obj = document.getElementById('html_graph_' + graph_index);
+	if(!graph_obj) {
+		$("body").append(
+			'<div id="html_graph_' + graph_index + '">' + 
+			'<canvas id="canvas_' + graph_index + '" style="position:absolute; z-index:1; pointer-events:none;"></canvas>' + 
+			'<video id="video_' + graph_index + '" style="object-fit:fill;" autoplay="autoplay" controls="controls"></video>' + 
+			'</div>'
+		);
+	}
+	
+	$('#html_graph_' + graph_index).window({
+		width: set_width,
+		height: set_height,
+		title: title != 'undefined' ? title : 'graph_window',
+		left: 45 + 40 * graph_index,
+		top: 85 + 40 * graph_index,
+		minimizable: false,
+		modal: false,
+		onResize: function(width, height) {
+			// console.log(this.id);
+			var id_array = this.id.split("_");
+			// reset_graph(id_array[2]);
+		}
+	});
+	reset_graph(graph_index, set_width, set_height);
+	
+	set_video(graph_index, set_width, set_height, file_path, interval_time);
+	
+	handle_video_event(graph_index);
+
+	handle_graph_index = graph_index;
+	graph_index++;
+}
+
 function show_graph_window(title, set_width, set_height, dim) {
 	// console.log("show_graph_window", typeof set_width, set_height);
 	set_width = (set_width != 'undefined' ? set_width : 400);
