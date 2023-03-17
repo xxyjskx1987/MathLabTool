@@ -216,6 +216,9 @@ function handle_video_event(param_graph_index) {
 }
 
 function handle_video_fps(param_graph_index, set_width, set_height) {
+	if(is_pause) {
+		return;
+	}
 	var canvas_obj = document.getElementById('dump_canvas_' + param_graph_index);
 	if(!canvas_obj) {
 		canvas_obj = document.createElement("canvas");
@@ -242,13 +245,16 @@ function draw_img(param_graph_index, base64_data) {
 			var canvas_obj = document.getElementById('canvas_' + param_graph_index);
 			var ctx = canvas_obj.getContext('2d');
 			// ctx.drawImage(test_img, 0, 0, 600 - 18, 400 - 44);
-			ctx.drawImage(dump_img, 0, 0, 200, 150);
+			// ctx.drawImage(dump_img, 0, 0, canvas_obj.width, canvas_obj.height);
+			ctx.drawImage(dump_img, 0, 0, 250, 200);
 		}
 	}
 	dump_img.src = base64_data;
 	// console.log(base64_data, test_img);
 }
 
+var video_interval = null;
+var is_pause = false;
 function set_video(param_graph_index, set_width, set_height, file_path, interval_time) {
 	var video_obj = document.getElementById('video_' + param_graph_index);
 	video_obj.width = set_width - 18;
@@ -256,8 +262,17 @@ function set_video(param_graph_index, set_width, set_height, file_path, interval
 	video_obj.src = file_path;
 	video_obj.addEventListener('play', function() {
         // console.log("play");
-		setInterval(handle_video_fps, interval_time, param_graph_index, set_width, set_height);
+		is_pause = false;
+		video_interval = setInterval(handle_video_fps, interval_time, param_graph_index, set_width, set_height);
     });
+	video_obj.addEventListener('pause', function() {
+        // console.log("pause");
+		is_pause = true;
+	});
+	video_obj.addEventListener('ended', function() {
+        // console.log("ended");
+		clearInterval(video_interval);
+	});
 }
 
 function show_video_window(title, set_width, set_height, file_path, interval_time) {

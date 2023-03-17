@@ -2,13 +2,18 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const { exec } = require('child_process')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
+const {
+  Worker, isMainThread, parentPort, workerData
+} = require('worker_threads');
 const { SerialPort } = require('serialport')
 const PNG = require("pngjs").PNG;
 
 var mlt_addon = null;
 var page_handle = null;
 var sp = null;
-
+var cpu_lenth = os.cpus().length;
+// console.log('cpu len', os.cpus().length);
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
 // console.log(process.title);
@@ -245,21 +250,176 @@ global.mlt_draw_graph_dim3 = function(graph_type, title, width, height, graph_da
 };
 
 var handle_fps = null;
+var last_pixel_data = [];
+// var queue = [];
+// var workers = [];
+
 global.mlt_handle_video = function(title, width, height, interval_time, cb_handle_fps) {
+	// workers = [];
 	handle_fps = cb_handle_fps;
+	// , cpu_percent
+	// if(cpu_percent > 0) {
+		// var work_len = parseInt(cpu_percent * cpu_lenth);
+		// work_len = work_len ? work_len : 1;
+		// for(var i = 0; i < work_len; i++) {
+			// const worker_obj = new Worker(__filename, {
+				// workerData: {}
+			// });
+			// workers[i] = {
+				// worker: worker_obj,
+				// working: false
+			// };
+		// }
+	// }
 	page_handle.sender.send('pong', 'open_video|' + title + '|' + width + '|' + height + '|' + interval_time);
 };
 
-global.mlt_video_gray_avg = function(png) {
+global.mlt_save_pixel_data = function(image_data) {
+	for (var y = 0; y < image_data.height; y++) {
+		for (var x = 0; x < image_data.width; x++) {
+			var i = y * 4 * image_data.width + x * 4;
+			last_pixel_data[i] = image_data.data[i];
+			last_pixel_data[i + 1] = image_data.data[i + 1];
+			last_pixel_data[i + 2] = image_data.data[i + 2];
+			last_pixel_data[i + 3] = image_data.data[i + 3];
+		}
+    }
+};
+
+global.mlt_get_last_pixel_data = function() {
+	return last_pixel_data;
+};
+
+global.mlt_clone_array = function(data) {
+	var ret = [];
+	for(var idx in data) {
+		ret[idx] = data[idx];
+	}
+	return ret;
+};
+
+global.mlt_image_gray_diff_binaryzation = function(image_data, last_data, binaryzation) {
+	for (var y = 0; y < image_data.height; y++) {
+		for (var x = 0; x < image_data.width; x++) {
+			var i = y * 4 * image_data.width + x * 4;
+			image_data.data[i] = Math.abs(last_data[i] - image_data.data[i]) > binaryzation ? 255 : 0;
+			image_data.data[i + 1] = Math.abs(last_data[i + 1] - image_data.data[i + 1]) > binaryzation ? 255 : 0;
+			image_data.data[i + 2] = Math.abs(last_data[i + 2] - image_data.data[i + 2]) > binaryzation ? 255 : 0;
+		}
+    }
+};
+
+global.mlt_image_gray_avg = function(png) {
 	for (var y = 0; y < png.height; y++) {
 		for (var x = 0; x < png.width; x++) {
 			var i = y * 4 * png.width + x * 4;
 			var avg = (png.data[i] + png.data[i + 1] + png.data[i + 2]) / 3;
 			png.data[i] = avg;
-			png.data[i+1] = avg;
-			png.data[i+2] = avg;
+			png.data[i + 1] = avg;
+			png.data[i + 2] = avg;
 		}
     }
+};
+
+global.mlt_image_smooth_avg = function(png) {
+	var res = [];
+	for (var y = 0; y < png.height; y++) {
+		for (var x = 0; x < png.width; x++) {
+			var i = y * 4 * png.width + x * 4;
+			res[i] = png.data[i];
+		}
+    }
+	for (var y = 0; y < png.height; y++) {
+		for (var x = 0; x < png.width; x++) {
+			var i = y * 4 * png.width + x * 4;
+			var sum_num = 0;
+			var sum = 0;
+			for(var m = -2; m < 3; m++) {
+				for(var n = -2; n < 3; n++) {
+					if(y + m >= 0 && y + m < png.height && 
+						x + n >= 0 && x + n < png.width) {
+						var idx = (y + m) * 4 * png.width + (x + n) * 4;
+						sum += res[idx];
+						sum_num++;
+					}
+				}
+			}
+			var avg = sum / sum_num;
+			png.data[i] = avg;
+			png.data[i + 1] = avg;
+			png.data[i + 2] = avg;
+		}
+    }
+};
+
+global.mlt_get_sharpen_model = function(model_name) {
+	if(model_name == 'Laplacian') {
+		return [
+			[-1, -1, -1],
+			[-1, 9, -1],
+			[-1, -1, -1]
+		];
+	}
+};
+
+global.mlt_image_sharpen_model = function(png, model) {
+	var res = [];
+	for (var y = 0; y < png.height; y++) {
+		for (var x = 0; x < png.width; x++) {
+			var i = y * 4 * png.width + x * 4;
+			res[i] = png.data[i];
+			res[i + 1] = png.data[i + 1];
+			res[i + 2] = png.data[i + 2];
+		}
+    }
+	for (var y = 0; y < png.height; y++) {
+		for (var x = 0; x < png.width; x++) {
+			var i = y * 4 * png.width + x * 4;
+			var sum_num = 0;
+			var sum0 = 0;
+			var sum1 = 0;
+			var sum2 = 0;
+			for(var m = -1; m < 2; m++) {
+				for(var n = -1; n < 2; n++) {
+					if(y + m >= 0 && y + m < png.height && 
+						x + n >= 0 && x + n < png.width) {
+						var idx = (y + m) * 4 * png.width + (x + n) * 4;
+						sum0 += (res[idx] * model[m + 1][n + 1]);
+						sum1 += (res[idx + 1] * model[m + 1][n + 1]);
+						sum2 += (res[idx + 2] * model[m + 1][n + 1]);
+						sum_num++;
+					}
+				}
+			}
+			if(sum0 > 255) {
+				sum0 = 255;
+			} else if(sum0 < 0) {
+				sum0 = 0;
+			}
+			if(sum1 > 255) {
+				sum1 = 255;
+			} else if(sum1 < 0) {
+				sum1 = 0;
+			}
+			if(sum2 > 255) {
+				sum2 = 255;
+			} else if(sum2 < 0) {
+				sum2 = 0;
+			}
+			
+			png.data[i] = sum0;
+			png.data[i+1] = sum1;
+			png.data[i+2] = sum2;
+		}
+    }
+};
+
+global.mlt_video_show_image = function(graph_index, image_data, show_info) {
+	var head_str = "data:image/png;base64,";
+	var options = {colorType: 6};
+	var buffer = PNG.sync.write(image_data, options);
+	var base64Str = head_str + buffer.toString('base64');
+	page_handle.sender.send('pong', 'draw_img|' + graph_index + '|' + base64Str);
 };
 
 var handle_video_fps = function(graph_index, base64_data) {
@@ -268,11 +428,10 @@ var handle_video_fps = function(graph_index, base64_data) {
 	base64_data = base64_data.replace(head_str, "");
 	var buff = Buffer.from(base64_data, 'base64');
 	var png = PNG.sync.read(buff);
-	handle_fps(png);
-	var options = {colorType: 6};
-	var buffer = PNG.sync.write(png, options);
-	var base64Str = head_str + buffer.toString('base64');
-	page_handle.sender.send('pong', 'draw_img|' + graph_index + '|' + base64Str);
+	var ret = handle_fps(png, graph_index);
+	if(ret) {
+		mlt_video_show_image(graph_index, png, {});
+	}
 };
 
 global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
