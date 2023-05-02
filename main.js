@@ -9,6 +9,14 @@ const {
 const { SerialPort } = require('serialport')
 const PNG = require("pngjs").PNG;
 
+const buf = fs.readFileSync('public/wasm_lib/test.wasm');
+const lib = WebAssembly.instantiate(new Uint8Array(buf)).
+   then(res => {
+      var add = res.instance.exports.add(2021, 2000);
+	  console.log(add);
+   }
+);
+
 var mlt_addon = null;
 var page_handle = null;
 var sp = null;
@@ -741,8 +749,7 @@ const createWindow = () => {
 	}
 }
 
-app.disableHardwareAcceleration()
-
+// app.disableHardwareAcceleration();
 // app.commandLine.appendSwitch('ignore-gpu-blacklist');
 
 // 这段程序将会在 Electron 结束初始化

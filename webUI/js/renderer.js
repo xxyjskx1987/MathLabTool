@@ -122,12 +122,20 @@ var handle_graph_index = -1;
 
 function reset_graph(param_graph_index, set_width, set_height) {
 	var canvas = document.getElementById('canvas_' + param_graph_index);
+	// var gl = canvas.getContext('webgl');
+	// if(!gl) {
+		// console.log('no support')
+	// }
 	canvas.width = set_width - 18;
 	canvas.height = set_height - 44;
 	var ctx = canvas.getContext('2d');
 	if (ctx) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
+	
+	// gl.viewport(0,0,canvas.clientWidth,canvas.clientHeight);
+	// gl.clearColor(0.0,0.0,0.0,1.0);
+	// gl.clear(gl.COLOR_BUFFER_BIT);
 }
 
 var canvas_mouse_obj = {};

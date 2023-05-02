@@ -13,6 +13,20 @@
 		if (typeof module === 'object') {
 			window.jQuery = window.$ = module.exports;
 		}
+		
+		function fetchAndInstantiate(url, importObject) {
+			return fetch(url).then(response =>
+				response.arrayBuffer()).then(bytes =>
+				WebAssembly.instantiate(bytes, importObject)
+			).then(results =>
+				results.instance
+			);
+		}
+		
+		fetchAndInstantiate('../public/wasm_lib/test.wasm').then(function (instance) {
+			var add = instance.exports.add(2021, 2000);
+			console.log(add);
+		});
 	</script>
 	<script type="text/javascript" src="jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
 	<script src="js/pre_renderer.js"></script>
