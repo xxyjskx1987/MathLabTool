@@ -1,5 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
@@ -9,13 +9,13 @@ const {
 const { SerialPort } = require('serialport')
 const PNG = require("pngjs").PNG;
 
-const buf = fs.readFileSync('public/wasm_lib/test.wasm');
-const lib = WebAssembly.instantiate(new Uint8Array(buf)).
-   then(res => {
-      var add = res.instance.exports.add(2021, 2000);
-	  console.log(add);
-   }
-);
+// const buf = fs.readFileSync('public/wasm_lib/mlt_API.wasm');
+// const lib = WebAssembly.instantiate(new Uint8Array(buf)).
+   // then(res => {
+      // var add = res.instance.exports.add(2021, 2000);
+	  // console.log(add);
+   // }
+// );
 
 var mlt_addon = null;
 var page_handle = null;
@@ -25,6 +25,20 @@ var cpu_lenth = os.cpus().length;
 // console.log('process.versions.electron', process.versions.electron)
 // console.log('process.versions.node', process.versions.node)
 // console.log(process.title);
+// process.env.UV_THREADPOOL_SIZE = 10;
+// set UV_THREADPOOL_SIZE=10 && 
+// console.log('process.env.UV_THREADPOOL_SIZE', process.env.UV_THREADPOOL_SIZE);
+
+global.mlt_auto_code = function() {
+	// mlt_addon.thread_test();
+	exec('node ./process_ac.js', (error, stdout, stderr) => {
+		if (error) {
+			console.log(`exec error: ${error}`);
+			return;
+		}
+		console.log(stdout);
+	});
+};
 
 global.mlt_serial_list = function(serial_list_callback) {
 	SerialPort.list().then(ports => {
@@ -734,6 +748,7 @@ const createWindow = () => {
 		webPreferences: {
 			contextIsolation: false,
 			nodeIntegration: true,
+			nodeIntegrationInWorker: true,
 			// webgl: true,
 			// webSecurity: false,
 			// experimentalFeatures: true,

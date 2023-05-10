@@ -22,10 +22,11 @@
 				results.instance
 			);
 		}
-		
-		fetchAndInstantiate('../public/wasm_lib/test.wasm').then(function (instance) {
+		var wasmtest = null;
+		fetchAndInstantiate('../public/wasm_lib/mlt_API.wasm').then(function (instance) {
 			var add = instance.exports.add(2021, 2000);
 			console.log(add);
+			wasmtest = instance.exports;
 		});
 	</script>
 	<script type="text/javascript" src="jquery-easyui-1.10.8/jquery.easyui.min.js"></script>
