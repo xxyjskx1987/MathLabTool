@@ -14,3 +14,5 @@ $.i18n.dlg_save_as_error_tip_tree_require = '请选择文件夹。';
 $.i18n.dlg_save_as_error_tip_file_name_require = '请填写文件名。';
 $.i18n.save_success = '保存成功';
 $.i18n.save_error = '保存失败';
+$.i18n.console_clear_btn = '清空控制台';
+$.i18n.chat_btn = 'AI_NLP';

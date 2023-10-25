@@ -14,3 +14,5 @@ $.i18n.dlg_save_as_error_tip_tree_require = 'Please select a folder.';
 $.i18n.dlg_save_as_error_tip_file_name_require = 'Please fill in the file name.';
 $.i18n.save_success = 'Save successfully';
 $.i18n.save_error = 'Fail to save';
+$.i18n.console_clear_btn = 'Clear console';
+$.i18n.chat_btn = 'AI_NLP';

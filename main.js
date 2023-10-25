@@ -1,5 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-const { exec, spawn } = require('child_process')
+const { exec, fork } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
@@ -9,13 +9,15 @@ const {
 const { SerialPort } = require('serialport')
 const PNG = require("pngjs").PNG;
 
-// const buf = fs.readFileSync('public/wasm_lib/mlt_API.wasm');
-// const lib = WebAssembly.instantiate(new Uint8Array(buf)).
-   // then(res => {
-      // var add = res.instance.exports.add(2021, 2000);
-	  // console.log(add);
-   // }
-// );
+// chcp 65001 && 
+
+const buf = fs.readFileSync('public/wasm_lib/mlt_API.wasm');
+const lib = WebAssembly.instantiate(new Uint8Array(buf)).
+   then(res => {
+      var add = res.instance.exports.add(2021, 2000);
+	  console.log(add);
+   }
+);
 
 var mlt_addon = null;
 var page_handle = null;
@@ -29,15 +31,51 @@ var cpu_lenth = os.cpus().length;
 // set UV_THREADPOOL_SIZE=10 && 
 // console.log('process.env.UV_THREADPOOL_SIZE', process.env.UV_THREADPOOL_SIZE);
 
-global.mlt_auto_code = function() {
-	// mlt_addon.thread_test();
-	exec('node ./process_ac.js', (error, stdout, stderr) => {
-		if (error) {
-			console.log(`exec error: ${error}`);
-			return;
-		}
-		console.log(stdout);
+// app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
+
+// , {execArgv: ['--max-old-space-size=4096']}
+var forked = fork('process_ac.js');
+
+function fork_init() {
+	forked.on("message", function(msg) {
+		console.log("[father get msg]:", msg);
+		
+		var param_obj = JSON.parse(msg);
+		mlt_page_console_log('ret:', param_obj.rets, '\n');
 	});
+
+	forked.on("close", function(code) {
+		console.log(`child process close all stdio with code ${code}`);
+		forked = fork('process_ac.js');
+		fork_init();
+	});
+
+	forked.on("error", function(code) {
+		console.log(`child process error all stdio with code ${code}`);
+	});
+}
+
+fork_init();
+
+global.mlt_auto_code = function(param) {
+	// mlt_addon.thread_test();
+	// console.log('main ac:', param);
+	// exec('node ./process_ac.js ' + param, (error, stdout, stderr) => {
+		// if (error) {
+			// console.log(`exec error: ${error}`);
+			// return;
+		// }
+		// console.log('mlt_auto_code:', stdout);
+	// });
+	
+	mlt_page_console_log('mlt_auto_code:', param, '\n');
+	
+	var params = {
+		func: 'auto_code',
+		params: param
+	};
+	
+	forked.send(JSON.stringify(params));
 };
 
 global.mlt_serial_list = function(serial_list_callback) {
@@ -532,6 +570,10 @@ global.mlt_draw_graph = function(graph_type, title, width, height, graph_data) {
 	}
 };
 
+global.reset_graph = function(data) {
+	// console.log(data);
+};
+
 global.draw_line = function(s_x, s_y, e_x, e_y, color) {
 	page_handle.sender.send('pong', 'draw_line|' + s_x + '|' + s_y + '|' + e_x + '|' + e_y + '|' + color);
 };
@@ -542,6 +584,28 @@ global.draw_text = function(text_str, x, y) {
 
 global.draw_circle = function(s_x, s_y, radius, color, is_fill) {
 	page_handle.sender.send('pong', 'draw_circle|' + s_x + '|' + s_y + '|' + radius + '|' + color + '|' + is_fill);
+};
+
+global.add_shapes2graph = function(shape_data, width, height) {
+	var ret_data = shape_data['data'];
+	for(var idx in ret_data) {
+		for(var jdx in ret_data[idx]['data']) {
+			var graph_coord = mlt_addon.get_graph_coord(
+								4, width - 18, height - 44, shape_data, 
+								ret_data[idx]['data'][jdx][0].toString(), 
+								ret_data[idx]['data'][jdx][1].toString()
+							);
+			// console.log(ret_data[idx]['shape'], jdx, graph_coord);
+			if(ret_data[idx]['shape'] == 1) {
+				draw_circle(
+					graph_coord[0], graph_coord[1], 
+					ret_data[idx]['data'][jdx][2], 
+					ret_data[idx]['color'], 
+					ret_data[idx]['data'][jdx][3]
+				);
+			}
+		}
+	}
 };
 
 global.array_raw2col = function(data) {
@@ -566,8 +630,17 @@ global.csv2array = function(path, data_option) {
 		// console.log("file length:", data_array.length);
 		
 		var all_num = 0;
+		var end_row = 0;
+		if(data_option.data_end_row){
+			end_row = Number(data_option.data_end_row);
+			if(end_row < 0){
+				end_row = data_array.length + end_row;
+			}
+		}
+		// console.log(end_row, data_array.length);
 		for(var i = 0; i < data_array.length; i++) {
-			if(data_array[i] && i >= data_option.data_begin_row) {
+			if(data_array[i] && i >= data_option.data_begin_row && 
+				(i < end_row || !end_row)) {
 				// console.log(i, data_array[i]);
 				var raw_data = data_array[i].split(",");
 				// console.log(raw_data.length, raw_data);
@@ -678,6 +751,10 @@ global.mlt_calc_formula = function(formula, i_var, i_var_val) {
 	formula = formula.split(' ').join('');
 	// console.log(formula);
 	return mlt_addon.analytic_formula(formula, formula.length, i_var, i_var_val);
+};
+
+global.mlt_perceptron = function(data) {
+	return mlt_addon.mlt_perceptron(data);
 };
 
 let mainWindow;

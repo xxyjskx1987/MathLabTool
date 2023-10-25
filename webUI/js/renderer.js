@@ -446,4 +446,6 @@ function load_i18n_data() {
 	$('#dialog_save_as_function_tip').html($.i18n['dialog_save_as_function_tip']);
 	$('#dlg_save_as_td_file_name').html($.i18n['dlg_save_as_td_file_name']);
 	$('#dlg_save_as_submit').linkbutton({text: $.i18n['file_save']});
+	$('#console_clear_btn').linkbutton({text: $.i18n['console_clear_btn']});
+	$('#chat_btn').linkbutton({text: $.i18n['chat_btn']});
 }

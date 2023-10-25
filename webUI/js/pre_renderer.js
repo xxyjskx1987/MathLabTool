@@ -1,5 +1,13 @@
 const { ipcRenderer } = require('electron')
 
+function clear_console() {
+	$('#page_console_log').html('');
+}
+
+function chat_open() {
+	$('#chat_dialog').dialog('open');
+}
+
 function save_as_click() {
 	$('#html_save_as_error_tip').html('');
 	var node = $('#tree_dir').tree('find', 'MyComputer');
