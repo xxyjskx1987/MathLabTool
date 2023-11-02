@@ -757,6 +757,10 @@ global.mlt_perceptron = function(data) {
 	return mlt_addon.mlt_perceptron(data);
 };
 
+global.mlt_knn = function(data) {
+	return mlt_addon.mlt_knn(data);
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
