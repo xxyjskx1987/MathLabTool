@@ -761,6 +761,10 @@ global.mlt_knn = function(data) {
 	return mlt_addon.mlt_knn(data);
 };
 
+global.mlt_naive_bayes = function(data) {
+	return mlt_addon.mlt_naive_bayes(data);
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
