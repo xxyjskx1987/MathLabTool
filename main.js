@@ -35,13 +35,19 @@ var cpu_lenth = os.cpus().length;
 
 // , {execArgv: ['--max-old-space-size=4096']}
 var forked = fork('process_ac.js');
+var is_chat = 0;
 
 function fork_init() {
 	forked.on("message", function(msg) {
 		console.log("[father get msg]:", msg);
 		
 		var param_obj = JSON.parse(msg);
-		mlt_page_console_log('ret:', param_obj.rets, '\n');
+		
+		if(!is_chat) {
+			mlt_page_console_log('ret:', param_obj.rets, '\n');
+		} else {
+			page_handle.sender.send('pong', 'chat_get|' + param_obj.rets);
+		}
 	});
 
 	forked.on("close", function(code) {
@@ -68,7 +74,9 @@ global.mlt_auto_code = function(param) {
 		// console.log('mlt_auto_code:', stdout);
 	// });
 	
-	mlt_page_console_log('mlt_auto_code:', param, '\n');
+	if(!is_chat) {
+		mlt_page_console_log('mlt_auto_code:', param, '\n');
+	}
 	
 	var params = {
 		func: 'auto_code',
@@ -783,6 +791,9 @@ ipcMain.on("ping", (event, arg) => {
 		} else {
 			get_dir(event, msg_array[1]);
 		}
+	} else if(msg_array[0] == 'chat_send') {
+		is_chat = 1;
+		mlt_auto_code(msg_array[1]);
 	} else if(msg_array[0] == 'set_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_file');
 	} else if(msg_array[0] == 'run_file') {

@@ -8,6 +8,10 @@ function chat_open() {
 	$('#chat_dialog').dialog('open');
 }
 
+function chat_send(data) {
+	ipcRenderer.send("ping", 'chat_send|' + data);
+}
+
 function save_as_click() {
 	$('#html_save_as_error_tip').html('');
 	var node = $('#tree_dir').tree('find', 'MyComputer');
@@ -103,6 +107,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				data: JSON.parse(msg_array[2])
 			});
 			// console.log('pong', message);
+		} else if(msg_array[0] == 'chat_get'){
+			renderChatbotResponse(msg_array[1]);
+			setScrollPosition();
 		} else if(msg_array[0] == 'save_file_tip') {
 			if(msg_array[1] == 'success') {
 				$('#html_save_as_error_tip').html($.i18n['save_success']);
