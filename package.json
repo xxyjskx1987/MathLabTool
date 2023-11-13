@@ -1,10 +1,11 @@
 {
   "name": "MathLabTool",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MathLabTool",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
+	"rebuild": "electron-rebuild -f -w serialport",
     "dist": "electron-builder"
   },
   "repository": "https://github.com/xxyjskx1987/MathLabTool",
@@ -12,7 +13,8 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "electron": "^22.0.0",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^23.6.0",
+    "electron-rebuild": "^3.2.9"
   },
   "build": {
     "productName": "MathLabTool",
@@ -21,11 +23,12 @@
     "directories": {
       "output": "build"
     },
+	"asar": false,
+	"buildDependenciesFromSource": true,
     "files": [
       "!.git/",
       "!build/",
       "!extra_files/",
-      "!node_modules/",
       "!.gitignore",
       "!LICENSE",
       "!package-lock.json",
@@ -35,7 +38,8 @@
       "!yarn-error.log"
     ],
     "extraFiles": [
-      "extra_files"
+      "extra_files",
+	  "public"
     ],
     "nsis": {
       "oneClick": false,

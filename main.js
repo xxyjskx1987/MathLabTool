@@ -1,12 +1,12 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-const { exec, fork } = require('child_process')
-const path = require('path')
-const fs = require('fs')
-const os = require('os')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { exec, fork } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 const {
   Worker, isMainThread, parentPort, workerData
 } = require('worker_threads');
-const { SerialPort } = require('serialport')
+const { SerialPort } = require('serialport');
 const PNG = require("pngjs").PNG;
 
 // chcp 65001 && 
@@ -34,7 +34,7 @@ var cpu_lenth = os.cpus().length;
 // app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
 // , {execArgv: ['--max-old-space-size=4096']}
-var forked = fork('process_ac.js');
+var forked = fork(__dirname + '/addon/process_ac.js');
 var is_chat = 0;
 
 function fork_init() {
@@ -75,7 +75,7 @@ global.mlt_auto_code = function(param) {
 	// });
 	
 	if(!is_chat) {
-		mlt_page_console_log('mlt_auto_code:', param, '\n');
+		mlt_page_console_log('mlt_auto_code:', __dirname, param, '\n');
 	}
 	
 	var params = {

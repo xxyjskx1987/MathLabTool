@@ -1,4 +1,4 @@
-const mlt = require('./addon/mathlabtool');
+const mlt = require('./mathlabtool');
 
 // console.log(process.argv);
 
