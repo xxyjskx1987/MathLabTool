@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-	"rebuild": "electron-rebuild -f -w serialport",
+	"rebuild_sp": "electron-rebuild -f -w serialport",
     "dist": "electron-builder"
   },
   "repository": "https://github.com/xxyjskx1987/MathLabTool",
@@ -23,8 +23,6 @@
     "directories": {
       "output": "build"
     },
-	"asar": false,
-	"buildDependenciesFromSource": true,
     "files": [
       "!.git/",
       "!build/",
