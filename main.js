@@ -19,6 +19,9 @@ const lib = WebAssembly.instantiate(new Uint8Array(buf)).
    }
 );
 
+var addon_math = './addon/mathlabtool';
+// var addon_math = 'D:/mathlabtool/addon/build/Release/mathlabtool';
+
 var mlt_addon = null;
 var page_handle = null;
 var sp = null;
@@ -34,8 +37,11 @@ var cpu_lenth = os.cpus().length;
 // app.commandLine.appendSwitch('js-flags', '--max-old-space-size=4096');
 
 // , {execArgv: ['--max-old-space-size=4096']}
-var forked = fork(__dirname + '/addon/process_ac.js');
+// var forked = fork(__dirname + '/addon/process_ac.js');
+var forked = fork(path.join(__dirname, 'addon/process_ac.js'));
 var is_chat = 0;
+var is_custom_chat = 0;
+var custom_chat_cb = null;
 
 function fork_init() {
 	forked.on("message", function(msg) {
@@ -63,6 +69,13 @@ function fork_init() {
 
 fork_init();
 
+global.mlt_AI_NLP_chat = function(custom_cb) {
+	is_custom_chat = 1;
+	custom_chat_cb = custom_cb;
+	
+	page_handle.sender.send('pong', 'open_custom_chat|');
+};
+
 global.mlt_auto_code = function(param) {
 	// mlt_addon.thread_test();
 	// console.log('main ac:', param);
@@ -74,16 +87,21 @@ global.mlt_auto_code = function(param) {
 		// console.log('mlt_auto_code:', stdout);
 	// });
 	
-	if(!is_chat) {
-		mlt_page_console_log('mlt_auto_code:', __dirname, param, '\n');
+	if(!is_custom_chat) {
+		if(!is_chat) {
+			mlt_page_console_log('mlt_auto_code:', __dirname, param, '\n');
+		}
+		
+		var params = {
+			func: 'auto_code',
+			params: param
+		};
+		
+		forked.send(JSON.stringify(params));
+	} else {
+		var custom_ret = custom_chat_cb(param, 'extra_files/');
+		page_handle.sender.send('pong', 'chat_get|' + custom_ret);
 	}
-	
-	var params = {
-		func: 'auto_code',
-		params: param
-	};
-	
-	forked.send(JSON.stringify(params));
 };
 
 global.mlt_serial_list = function(serial_list_callback) {
@@ -780,8 +798,7 @@ ipcMain.on("ping", (event, arg) => {
 	if(msg_array[0] == 'page_handle') {
 		page_handle = event;
 		try {
-			mlt_addon = require('./addon/mathlabtool');
-			// mlt_addon = require('D:/mathlabtool/addon/build/Release/mathlabtool');
+			mlt_addon = require(addon_math);
 		} catch (e) {
 			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
 		}
@@ -794,6 +811,14 @@ ipcMain.on("ping", (event, arg) => {
 	} else if(msg_array[0] == 'chat_send') {
 		is_chat = 1;
 		mlt_auto_code(msg_array[1]);
+	} else if(msg_array[0] == 'chat_close') {
+		is_chat = 0;
+		is_custom_chat = 0;
+		
+		var params = {
+			func: 'clean_auto_code'
+		};
+		forked.send(JSON.stringify(params));
 	} else if(msg_array[0] == 'set_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_file');
 	} else if(msg_array[0] == 'run_file') {

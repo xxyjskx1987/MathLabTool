@@ -11,13 +11,23 @@ process.on("message", function(msg) {
 		var text_str_len = text_str ? Buffer.byteLength(text_str, 'utf8') : 0;
 		var ret = mlt.auto_code(text_str, text_str_len);
 		// console.log('auto_code ret:', ret);
-		var param = {
-			func: 'auto_code',
-			rets: ret
-		};
-		process.send(JSON.stringify(param));
+		// var param = {
+			// func: 'auto_code',
+			// rets: ret
+		// };
+		// process.send(JSON.stringify(param));
+	} else if(param_obj.func == 'clean_auto_code') {
+		mlt.clean_auto_code();
 	}
 });
+
+global.mlt_process_ac_send = function(data) {
+	var param = {
+		func: 'auto_code',
+		rets: data
+	};
+	process.send(JSON.stringify(param));
+};
 
 process.on("uncaughtException", function(code) {
 	console.log(`ac process uncaughtException code ${code}`);

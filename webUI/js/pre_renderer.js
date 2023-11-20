@@ -8,8 +8,18 @@ function chat_open() {
 	$('#chat_dialog').dialog('open');
 }
 
+function custom_chat_open() {
+	$('#chat_dialog').dialog('open');
+}
+
 function chat_send(data) {
 	ipcRenderer.send("ping", 'chat_send|' + data);
+}
+
+function chat_close() {
+	ipcRenderer.send("ping", 'chat_close|');
+	
+	chatBody.innerHTML = "";
 }
 
 function save_as_click() {
@@ -160,6 +170,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			video_file_open(msg_array[1], msg_array[2], msg_array[3], msg_array[4]);
 		} else if(msg_array[0] == 'draw_img') {
 			draw_img(msg_array[1], msg_array[2]);
+		} else if(msg_array[0] == 'open_custom_chat') {
+			custom_chat_open();
 		}
 	});
 });

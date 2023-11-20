@@ -115,28 +115,13 @@
 	<div id="chat_dialog" class="easyui-dialog" title="AI chat" 
 			style="width:600px;height:400px;padding:4px"
 			data-options="
+				minimizable: true,
 				closed: true,
-				modal: true
+				modal: true,
+				onClose: chat_close
 			">
-		<!-- <div class="easyui-panel" style="height:290px;"> -->
-			
-		<!-- </div> -->
 		<div class="easyui-panel">
-			<!-- <table cellpadding="5"> -->
-				<!-- <tr> -->
-					<!-- <td id="chat_dialog_input"> -->
-						<!-- <input class="easyui-textbox" data-options="multiline:true" value="This TextBox will allow the user to enter multiple lines of text." style="width:300px;height:100px"> -->
-					<!-- </td> -->
-					<!-- <td> -->
-						<!-- <a id="chat_input_submit" href="javascript:void(0)" class="easyui-linkbutton" onclick="chat_input_submit();"></a> -->
-					<!-- </td> -->
-				<!-- </tr> -->
-			<!-- </table> -->
 			<div class="container">
-				<!-- <div class="chat-header"> -->
-					<!-- <div class="logo"><img src="https://code.haiyong.site/wp-content/uploads/2022/10/logo.jpg" alt="cwt" /></div> -->
-					<!-- <div class="title">简易版Chat GPT</div> -->
-				<!-- </div> -->
 				<div class="chat-body"></div>
 				<div class="chat-input">
 					<div class="input-sec"><input type="text" id="txtInput" placeholder="在这里写" autofocus /></div>
@@ -148,67 +133,5 @@
 	
 	<script src="ace-src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/renderer.js"></script>
-	
-	<script>
-		<!-- const responseObj = { -->
-			<!-- 你好: "你好，我是最强人工智能ChatGPT，我能回答你所有问题，快来和我聊天吧！", -->
-			<!-- 五块钱怎么花三天: "坐公交回去找妈妈",				 -->
-			<!-- 你是小黑子吗: "不，我不是小黑子。我是OpenAI的聊天机器人模型ChatGPT", -->
-			<!-- 你为什么和我聊天: "只因你太美", -->
-			<!-- 嘿: "嘿！ 这是怎么回事", -->
-			<!-- 今天几号: new Date().toDateString(), -->
-			<!-- 几点了: new Date().toLocaleTimeString(), -->
-		<!-- }; -->
-		const chatBody = document.querySelector(".chat-body");
-		const txtInput = document.querySelector("#txtInput");
-		const send = document.querySelector(".send");
-		send.addEventListener("click", () => renderUserMessage());
-		txtInput.addEventListener("keyup", (event) => {
-			if (event.keyCode === 13) {
-				renderUserMessage();
-			}
-		});
-		const renderUserMessage = () => {
-			const userInput = txtInput.value;
-			if(userInput) {
-				renderMessageEle(userInput, "user");
-				txtInput.value = "";
-				setScrollPosition();
-				
-				chat_send(userInput);
-				<!-- setTimeout(() => { -->
-					<!-- renderChatbotResponse(userInput); -->
-					<!-- setScrollPosition(); -->
-				<!-- }, 600); -->
-			}
-		};
-		const renderChatbotResponse = (userInput) => {
-			const res = getChatbotResponse(userInput);
-			renderMessageEle(res);
-		};
-		const renderMessageEle = (txt, type) => {
-			let className = "user-message";
-			if (type !== "user") {
-				className = "chatbot-message";
-			}
-			const messageEle = document.createElement("div");
-			const txtNode = document.createTextNode(txt);
-			messageEle.classList.add(className);
-			messageEle.append(txtNode);
-			chatBody.append(messageEle);
-		};
-		const getChatbotResponse = (userInput) => {
-			<!-- return responseObj[userInput] == undefined ? -->
-				<!-- "听不太懂呢试试输点别的" : -->
-				<!-- responseObj[userInput]; -->
-			return userInput;
-		};
-		const setScrollPosition = () => {
-			if (chatBody.scrollHeight > 0) {
-				chatBody.scrollTop = chatBody.scrollHeight;
-			}
-		};
-
-	</script>
 </body>
 </html>
