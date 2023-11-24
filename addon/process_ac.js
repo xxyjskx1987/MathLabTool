@@ -18,6 +18,18 @@ process.on("message", function(msg) {
 		// process.send(JSON.stringify(param));
 	} else if(param_obj.func == 'clean_auto_code') {
 		mlt.clean_auto_code();
+	} else if(param_obj.func == 'get_word_train') {
+		var text_str = param_obj.params;
+		var text_str_len = text_str ? Buffer.byteLength(text_str, 'utf8') : 0;
+		var ret = mlt.get_word_train(text_str, text_str_len, param_obj.num);
+		
+		var param = {
+			func: 'get_word_train',
+			rets: ret
+		};
+		process.send(JSON.stringify(param));
+	} else {
+		mlt[param_obj.func]();
 	}
 });
 

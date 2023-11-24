@@ -10,6 +10,7 @@ const { SerialPort } = require('serialport');
 const PNG = require("pngjs").PNG;
 
 // chcp 65001 && 
+// node-gyp configure rebuild
 
 const buf = fs.readFileSync('public/wasm_lib/mlt_API.wasm');
 const lib = WebAssembly.instantiate(new Uint8Array(buf)).
@@ -49,16 +50,21 @@ function fork_init() {
 		
 		var param_obj = JSON.parse(msg);
 		
-		if(!is_chat) {
-			mlt_page_console_log('ret:', param_obj.rets, '\n');
+		if(param_obj.func == 'get_word_train') {
+			mlt_page_console_log('get_word_train:', param_obj.rets, '\n');
 		} else {
-			page_handle.sender.send('pong', 'chat_get|' + param_obj.rets);
+			if(!is_chat) {
+				mlt_page_console_log('ret:', param_obj.rets, '\n');
+			} else {
+				page_handle.sender.send('pong', 'chat_get|' + param_obj.rets);
+			}
 		}
 	});
 
 	forked.on("close", function(code) {
 		console.log(`child process close all stdio with code ${code}`);
-		forked = fork('process_ac.js');
+		// forked = fork('process_ac.js');
+		forked = fork(path.join(__dirname, 'addon/process_ac.js'));
 		fork_init();
 	});
 
@@ -102,6 +108,24 @@ global.mlt_auto_code = function(param) {
 		var custom_ret = custom_chat_cb(param, 'extra_files/');
 		page_handle.sender.send('pong', 'chat_get|' + custom_ret);
 	}
+};
+
+global.mlt_get_word_train = function(data, get_num) {
+	var params = {
+		func: 'get_word_train',
+		params: data,
+		num: get_num
+	};
+	
+	forked.send(JSON.stringify(params));
+};
+
+global.mlt_train_text = function(data) {
+	var params = {
+		func: 'train_text'
+	};
+	
+	forked.send(JSON.stringify(params));
 };
 
 global.mlt_serial_list = function(serial_list_callback) {
