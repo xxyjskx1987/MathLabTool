@@ -1,6 +1,6 @@
 const mlt = require('./mathlabtool');
 
-// console.log(process.argv);
+// console.log('p_ac argv', process.argv[2]);
 
 process.on("message", function(msg) {
     console.log("[child get msg]:", msg);

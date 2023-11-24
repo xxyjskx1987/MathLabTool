@@ -39,6 +39,7 @@ var cpu_lenth = os.cpus().length;
 
 // , {execArgv: ['--max-old-space-size=4096']}
 // var forked = fork(__dirname + '/addon/process_ac.js');
+// , ['{test:111}']
 var forked = fork(path.join(__dirname, 'addon/process_ac.js'));
 var is_chat = 0;
 var is_custom_chat = 0;
