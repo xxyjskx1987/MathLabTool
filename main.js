@@ -129,6 +129,24 @@ global.mlt_train_text = function(data) {
 	forked.send(JSON.stringify(params));
 };
 
+global.mlt_text_same_diff = function(text1, text2) {
+	var t1_len = text1 ? Buffer.byteLength(text1, 'utf8') : 0;
+	var t2_len = text2 ? Buffer.byteLength(text2, 'utf8') : 0;
+
+	return mlt_addon.get_das4text(text1, t1_len, text2, t2_len);
+};
+
+global.mlt_text_all_word_cnt = function(isfile, text1, text2) {
+	var params = {
+		func: 'text_all_word_cnt',
+		isfile: isfile,
+		text1: text1,
+		text2: text2
+	};
+	
+	forked.send(JSON.stringify(params));
+};
+
 global.mlt_serial_list = function(serial_list_callback) {
 	SerialPort.list().then(ports => {
 		ports.forEach(function(port) {

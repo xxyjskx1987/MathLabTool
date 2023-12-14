@@ -28,6 +28,11 @@ process.on("message", function(msg) {
 			rets: ret
 		};
 		process.send(JSON.stringify(param));
+	} else if(param_obj.func == 'text_all_word_cnt') {
+		var t1_len = param_obj.text1 ? Buffer.byteLength(param_obj.text1, 'utf8') : 0;
+		var t2_len = param_obj.text2 ? Buffer.byteLength(param_obj.text2, 'utf8') : 0;
+		
+		mlt.get_all_cnt4text(param_obj.isfile, param_obj.text1, t1_len, param_obj.text2, t2_len);
 	} else {
 		mlt[param_obj.func]();
 	}
