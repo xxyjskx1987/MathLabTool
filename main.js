@@ -866,6 +866,13 @@ ipcMain.on("ping", (event, arg) => {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_file');
 	} else if(msg_array[0] == 'run_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'run_file');
+	} else if(msg_array[0] == 'run_str') {
+		page_handle = event;
+		try {
+			eval(msg_array[1]);
+		} catch (e) {
+			page_handle.sender.send('pong', 'page_console_log|' + e.toString() + '\n');
+		}
 	} else if(msg_array[0] == 'set_exist_file') {
 		set_file_write(event, msg_array[1], msg_array[2], 'set_exist_file');
 	} else if(msg_array[0] == 'draw_dim3') {

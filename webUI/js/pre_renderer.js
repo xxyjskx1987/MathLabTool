@@ -237,6 +237,9 @@ function run_click() {
 			code_editors['editor' + index].getValue());
 	} else {
 		// console.log('please save');
-		save_as_click();
+		// save_as_click();
+		graph_index = 0;
+		ipcRenderer.send("ping", 'run_str|' + 
+			code_editors['editor' + index].getValue());
 	}
 }
