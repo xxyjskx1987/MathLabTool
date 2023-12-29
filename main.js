@@ -834,6 +834,15 @@ global.mlt_naive_bayes = function(data) {
 	return mlt_addon.mlt_naive_bayes(data);
 };
 
+global.mlt_hp_ln_add = function(add1, add2) {
+	var expect_sum = "";
+	var add1_len = add1 ? Buffer.byteLength(add1, 'utf8') : 0;
+	var add2_len = add2 ? Buffer.byteLength(add2, 'utf8') : 0;
+	var expect_sum_len = expect_sum ? Buffer.byteLength(expect_sum, 'utf8') : 0;
+	
+	return mlt_addon.n_hp_ln_add(add1, add1_len, add2, add2_len, true, expect_sum, expect_sum_len);
+};
+
 let mainWindow;
 
 ipcMain.on("ping", (event, arg) => {
