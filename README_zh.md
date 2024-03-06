@@ -54,10 +54,6 @@ yarn dist
 
 [接口文档](https://gitee.com/xxyjskx1987/MathLabTool/wikis/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3)
 
-## 社区
-
-QQ群：205229578
-
 ## 特点
 
 - **开源：** 保持开源。  
