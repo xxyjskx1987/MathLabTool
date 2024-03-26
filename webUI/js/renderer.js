@@ -441,6 +441,8 @@ function load_i18n_data() {
 	$('#page_console_log').panel('setTitle', $.i18n['console']);
 	var east_panel = $('#root_container').layout('panel', 'east');
 	east_panel.panel('setTitle', $.i18n['tools']);
+	$('#ea_basic').panel('setTitle', $.i18n['ea_basic']);
+	$('#ea_animation').panel('setTitle', $.i18n['ea_animation']);
 	var save_dlg = $('#dlg_save_file').dialog();
 	save_dlg.panel('setTitle', $.i18n['file_save_as']);
 	$('#dialog_save_as_function_tip').html($.i18n['dialog_save_as_function_tip']);
@@ -448,6 +450,9 @@ function load_i18n_data() {
 	$('#dlg_save_as_submit').linkbutton({text: $.i18n['file_save']});
 	$('#console_clear_btn').linkbutton({text: $.i18n['console_clear_btn']});
 	$('#chat_btn').linkbutton({text: $.i18n['chat_btn']});
+	$('#animation_play').linkbutton({text: $.i18n['animation_play']});
+	$('#animation_pause').linkbutton({text: $.i18n['animation_pause']});
+	$('#animation_stop').linkbutton({text: $.i18n['animation_stop']});
 }
 
 const chatBody = document.querySelector(".chat-body");
