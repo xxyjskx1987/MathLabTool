@@ -21,3 +21,5 @@ $.i18n.chat_btn = '机器人';
 $.i18n.animation_play = '播放';
 $.i18n.animation_pause = '暂停';
 $.i18n.animation_stop = '停止';
+$.i18n.play_frame = '播放帧';
+$.i18n.data_frame = '数据帧';

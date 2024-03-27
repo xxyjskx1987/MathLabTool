@@ -21,3 +21,5 @@ $.i18n.chat_btn = 'AI_NLP';
 $.i18n.animation_play = 'Play';
 $.i18n.animation_pause = 'Pause';
 $.i18n.animation_stop = 'Stop';
+$.i18n.play_frame = 'Play frame';
+$.i18n.data_frame = 'Data frame';

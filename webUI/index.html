@@ -81,13 +81,21 @@
 				</div>
 				<div id="ea_animation" title="animation">
 					<div style="margin-left:10px;margin-top:10px;">
-						<a id="animation_play" href="javascript:void(0)" class="easyui-linkbutton" onclick="clear_console();"></a>
+						<div id="play_frame">播放帧</div>
+						<input class="easyui-textbox" style="width:80%;height:26px;" value="10">
 					</div>
 					<div style="margin-left:10px;margin-top:10px;">
-						<a id="animation_pause" href="javascript:void(0)" class="easyui-linkbutton" onclick="clear_console();"></a>
+						<div id="data_frame">数据帧</div>
+						<input class="easyui-textbox" style="width:80%;height:26px;" value="5">
 					</div>
 					<div style="margin-left:10px;margin-top:10px;">
-						<a id="animation_stop" href="javascript:void(0)" class="easyui-linkbutton" onclick="clear_console();"></a>
+						<a id="animation_play" href="javascript:void(0)" class="easyui-linkbutton" onclick="a_play();"></a>
+					</div>
+					<div style="margin-left:10px;margin-top:10px;">
+						<a id="animation_pause" href="javascript:void(0)" class="easyui-linkbutton" onclick="a_pause();"></a>
+					</div>
+					<div style="margin-left:10px;margin-top:10px;">
+						<a id="animation_stop" href="javascript:void(0)" class="easyui-linkbutton" onclick="a_stop();"></a>
 					</div>
 				</div>
 			</div>

@@ -453,6 +453,8 @@ function load_i18n_data() {
 	$('#animation_play').linkbutton({text: $.i18n['animation_play']});
 	$('#animation_pause').linkbutton({text: $.i18n['animation_pause']});
 	$('#animation_stop').linkbutton({text: $.i18n['animation_stop']});
+	$('#play_frame').html($.i18n['play_frame']);
+	$('#data_frame').html($.i18n['data_frame']);
 }
 
 const chatBody = document.querySelector(".chat-body");
@@ -497,3 +499,15 @@ const setScrollPosition = () => {
 		chatBody.scrollTop = chatBody.scrollHeight;
 	}
 };
+
+function a_play() {
+	console.log('a_play');
+}
+
+function a_pause() {
+	console.log('a_pause');
+}
+
+function a_stop() {
+	console.log('a_stop');
+}
