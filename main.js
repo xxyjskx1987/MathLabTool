@@ -677,6 +677,10 @@ global.add_shapes2graph = function(shape_data, width, height) {
 	}
 };
 
+global.animation_set = function(graph_type, title, width, height, graph_data, var_data, ...add_data) {
+	console.log(graph_type, title, width, height, graph_data, var_data, add_data[0]);
+};
+
 global.array_raw2col = function(data) {
 	var ret = [];
 	for(var idx_raw in data){
