@@ -121,6 +121,7 @@ var graph_index = 0;
 var handle_graph_index = -1;
 
 function reset_graph(param_graph_index, set_width, set_height) {
+	param_graph_index = param_graph_index != null ? param_graph_index : handle_graph_index;
 	var canvas = document.getElementById('canvas_' + param_graph_index);
 	// var gl = canvas.getContext('webgl');
 	// if(!gl) {
@@ -501,7 +502,10 @@ const setScrollPosition = () => {
 };
 
 function a_play() {
-	console.log('a_play');
+	// console.log('a_play');
+	ipcRenderer.send("ping", 'a_play|' + 
+					$('#play_frame_val').val() + '|' + 
+					$('#data_frame_val').val());
 }
 
 function a_pause() {

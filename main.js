@@ -677,9 +677,124 @@ global.add_shapes2graph = function(shape_data, width, height) {
 	}
 };
 
+var a_play_frame = 0;
+var a_data_frame = 0;
+var a_play_sta = 0;
+var a_play_intv = null;
+var animation_data = {};
+
 global.animation_set = function(graph_type, title, width, height, graph_data, var_data, ...add_data) {
-	console.log(graph_type, title, width, height, graph_data, var_data, add_data[0]);
+	// console.log(graph_type, title, width, height, graph_data, var_data, add_data[0]);
+	animation_data['graph_type'] = graph_type;
+	animation_data['title'] = title;
+	animation_data['width'] = width;
+	animation_data['height'] = height;
+	animation_data['graph_data'] = graph_data;
+	animation_data['var_data'] = var_data;
+	animation_data['add_data'] = add_data;
+	animation_data['a_cnt'] = 0;
+	
+	page_handle.sender.send('pong', 'draw_graph|' + 
+							animation_data['title'] + '|' + 
+							animation_data['width'] + '|' + 
+							animation_data['height']);
+	
+	// console.log(animation_data);
 };
+
+function do_a_play() {
+	if(a_play_sta == 1 && animation_data['var_data'][animation_data['a_cnt']]) {
+		var addon_graph_type = 4;
+		var graph_data = animation_data['graph_data'];
+		var width = animation_data['width'];
+		var height = animation_data['height'];
+		
+		page_handle.sender.send('pong', 'reset_graph|' + 
+							animation_data['width'] + '|' + 
+							animation_data['height']);
+		
+		for(var idx in graph_data['data']){
+			if(graph_data['data'][idx]['formula']){
+				graph_data['data'][idx]['formula'] = graph_data['data'][idx]['formula'].split(' ').join('');
+				graph_data['data'][idx]['formula_len'] = graph_data['data'][idx]['formula'].length;
+			}
+			graph_data['data'][idx]['data_len'] = 80;
+			// console.log(graph_data['data'][idx]);
+		}
+		var ret_data = mlt_addon.draw_graph_formula(addon_graph_type, width - 18, height - 44, graph_data);
+		// console.log("draw_graph_formula", ret_data);
+		
+		for(var idx in ret_data){
+			var s_coord_x, s_coord_y, e_coord_x, e_coord_y;
+			var reset_draw = true;
+			for(var i in ret_data[idx]){
+				var ret = null;
+				if(graph_data['data'][idx]['formula']) {
+					ret = mlt_addon.analytic_formula(
+							graph_data['data'][idx]['formula'], 
+							graph_data['data'][idx]['formula_len'], 
+							['x'], 
+							[ret_data[idx][i]]
+						);
+				} else {
+					var i_val_number = Number(ret_data[idx][i]);
+					ret = graph_data['data'][idx]['formula_code'](i_val_number, animation_data['var_data'][animation_data['a_cnt']]).toString();
+				}
+				// console.log(ret_data[idx][i], ret);
+				var graph_coord = undefined;
+				if(ret != "inf" && ret != "Infinity"){
+					graph_coord = mlt_addon.get_graph_coord(
+						addon_graph_type, width - 18, height - 44, 
+						graph_data, ret_data[idx][i], ret
+					);
+				}
+				if(!graph_coord) {
+					// console.log("graph_coord", graph_coord);
+					reset_draw = true;
+				} else {
+					if(reset_draw) {
+						reset_draw = false;
+						s_coord_x = graph_coord[0];
+						s_coord_y = graph_coord[1];
+					} else {
+						e_coord_x = graph_coord[0];
+						e_coord_y = graph_coord[1];
+						draw_line(
+							s_coord_x, s_coord_y, e_coord_x, e_coord_y, 
+							graph_data['data'][idx]['color']
+						);
+						s_coord_x = e_coord_x;
+						s_coord_y = e_coord_y;
+					}
+				}
+			}
+		}
+		
+		for(var i in animation_data['add_data']) {
+			add_shapes2graph(animation_data['add_data'][i], width, height);
+		}
+		
+		animation_data['a_cnt']++;
+	} else if(!animation_data['var_data'][animation_data['a_cnt']]) {
+		clearInterval(a_play_intv);
+		a_play_intv = null;
+		animation_data['a_cnt'] = 0;
+		a_play_sta = 0;
+	}
+}
+
+function a_play(play_frame, data_frame) {
+	// console.log('main a_play');
+	a_play_sta = 1;
+	
+	a_play_frame = play_frame;
+	a_data_frame = data_frame;
+
+	if(!a_play_intv) {
+		// clearInterval
+		a_play_intv = setInterval(do_a_play, 1000 / a_play_frame);
+	}
+}
 
 global.array_raw2col = function(data) {
 	var ret = [];
@@ -897,6 +1012,8 @@ ipcMain.on("ping", (event, arg) => {
 		}
 	} else if(msg_array[0] == 'handle_video_fps') {
 		handle_video_fps(msg_array[1], msg_array[2]);
+	} else if(msg_array[0] == 'a_play') {
+		a_play(msg_array[1], msg_array[2]);
 	}
 });
 

@@ -172,6 +172,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			draw_img(msg_array[1], msg_array[2]);
 		} else if(msg_array[0] == 'open_custom_chat') {
 			custom_chat_open();
+		} else if(msg_array[0] == 'reset_graph') {
+			reset_graph(null, msg_array[1], msg_array[2]);
 		}
 	});
 });
