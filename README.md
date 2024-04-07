@@ -24,6 +24,7 @@ npm 8.15.0
 yarn 1.22.19
 electron 22.0.0
 electron node 16.17.1
+emcc 3.1.34
 ```
 
 ## Installation
