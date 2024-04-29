@@ -156,6 +156,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			// console.log('page_console_log', msg_array[1].replace('\n', '<br>'));
 			// $('#page_console_log').html($('#page_console_log').html() + msg_array[1].replace('\n', '<br />'));
 			$('#page_console_log').append(msg_array[1].replace('\n', '<br />'));
+		} else if(msg_array[0] == 'page_console_json') {
+			$('#page_console_log').append("<pre>" + msg_array[1] + "</pre>");
 		} else if(msg_array[0] == 'draw_graph') {
 			show_graph_window(msg_array[1], msg_array[2], msg_array[3], 2);
 		} else if(msg_array[0] == 'draw_line') {

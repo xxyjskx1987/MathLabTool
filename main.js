@@ -275,6 +275,13 @@ global.mlt_page_console_log = function(...log_str) {
 	}
 };
 
+// JSON.stringify(json_str, null, 2)
+global.mlt_page_console_json = function(json_str) {
+	if(page_handle){
+		page_handle.sender.send('pong', 'page_console_json|' + json_str);
+	}
+};
+
 var graph_datas = {};
 var handle_graph_data = [];
 var draw_zoom_graph_dim3 = function(graph_index, negitive) {
@@ -951,6 +958,10 @@ global.mlt_knn = function(data) {
 
 global.mlt_naive_bayes = function(data) {
 	return mlt_addon.mlt_naive_bayes(data);
+};
+
+global.decision_tree = function(data, type) {
+	return mlt_addon.mlt_decision_tree(data, type);
 };
 
 global.mlt_hp_ln_add = function(add1, add2) {
