@@ -1,6 +1,6 @@
 {
   "name": "MathLabTool",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "MathLabTool",
   "main": "main.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "build": {
     "productName": "MathLabTool",
     "appId": "com.xxyjskx1987.MathLabTool",
-    "copyright": "© 2023 MathLabTool",
+    "copyright": "© 2024 MathLabTool",
     "directories": {
       "output": "build"
     },
