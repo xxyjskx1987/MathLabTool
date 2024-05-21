@@ -67,7 +67,7 @@ yarn dist
 
 [Calculation Correctness Test](https://github.com/xxyjskx1987/MathLabTool/wiki/Help-Manual)
 
-|Environment|Test|
+|Environment|Functional Test|
 |:-:|:-:|
 |Win 10 x64|&#10003;|
 

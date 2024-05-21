@@ -67,7 +67,7 @@ yarn dist
 
 [计算正确性测试](https://gitee.com/xxyjskx1987/MathLabTool/wikis/%E5%B8%AE%E5%8A%A9%E6%89%8B%E5%86%8C)
 
-|环境|测试|
+|环境|功能性测试|
 |:-:|:-:|
 |Win 10 x64|&#10003;|
 
