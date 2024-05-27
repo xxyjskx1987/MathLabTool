@@ -65,7 +65,7 @@ yarn dist
 
 ## Test
 
-[Calculation Correctness Test](https://github.com/xxyjskx1987/MathLabTool/wiki/Help-Manual)
+[Calculation Correctness Test](https://github.com/xxyjskx1987/MathLabTool/wiki/Test-Case)
 
 |Environment|Functional Test|
 |:-:|:-:|
