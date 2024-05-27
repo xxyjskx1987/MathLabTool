@@ -948,6 +948,10 @@ global.mlt_calc_formula = function(formula, i_var, i_var_val) {
 	return mlt_addon.analytic_formula(formula, formula.length, i_var, i_var_val);
 };
 
+global.mlt_LR = function(data) {
+	return mlt_addon.mlt_LR(data);
+};
+
 global.mlt_perceptron = function(data) {
 	return mlt_addon.mlt_perceptron(data);
 };
